@@ -49,13 +49,13 @@ CuteGo是一套全部开源的快速开发平台，毫无保留给个人及企�
   ```
 
 - 3、将docs下的configs目录移动到cutego目录下
-  ![Configs](/Users/apple/projects/cutego/docs/images/ConfigFile.png)
+  ![Configs](docs/images/ConfigFile.png)
 
 - 4、idea配置如下
-  ![Edit Configurations...](/Users/apple/projects/cutego/docs/images/RunConfig.png)
+  ![Edit Configurations...](docs/images/RunConfig.png)
 
 - 5、下载依赖 go mod tidy
-  ![Download Mod](/Users/apple/projects/cutego/docs/images/DownloadMod.png)
+  ![Download Mod](docs/images/DownloadMod.png)
 
 #### 使用说明
 
