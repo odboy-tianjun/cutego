@@ -1,0 +1,44 @@
+cutego:
+  #默认激活dev
+  active: dev
+  # 演示模式
+  demo-mode: false
+  #邮件
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: tianjun@odboy.cn
+    password: xxxxxxxxxxx
+    default-encoding: UTF-8
+  task-pool:
+    # 核心线程池大小
+    core-pool-size: 10
+    # 最大线程数(尽可能的大)
+    max-pool-size: 1024
+    # 活跃时间
+    keep-alive-seconds: 60
+    # 队列容量
+    queue-capacity: 50
+  #验证码有效时间/秒
+  captcha:
+    #邮箱
+    email: 300
+    #手机短信
+    sms: 300
+  # 文件存储路径, 一定要配置绝对路径, 相对路径测试后有一定的bug
+  file:
+    mac:
+      path: /Users/apple/.cutego/file/
+      avatar: /Users/apple/.cutego/avatar/
+      logs: /Users/apple/.cutego/logs
+    linux:
+      path: /home/root/.cutego/file/
+      avatar: /home/root/.cutego/avatar/
+      logs: /home/root/.cutego/logs
+    windows:
+      path: C:\cutego\file\
+      avatar: C:\cutego\avatar\
+      logs: C:\cutego\logs
+    # 文件大小 /M
+    file-max-size: 100
+    avatar-max-size: 5

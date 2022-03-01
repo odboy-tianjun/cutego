@@ -1,0 +1,67 @@
+# web服务
+server:
+  # Running in "debug" mode. Switch to "release" mode in production
+  run-mode: debug
+  #web服务监听端口(生产的端口有可能不一样,所以根据环境隔离开)
+  port: 21366
+# 数据源
+datasource:
+  db-type: mysql
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: 123456
+  database: cutego
+  charset: utf8
+  max-idle-size: 10000
+  max-open-size: 100000
+redis:
+  # 数据库索引
+  database: 1
+  host: 127.0.0.1
+  port: 6379
+  password: xxxxxxxxxx
+  # 连接超时时间
+  timeout: 5000
+  pool:
+    # 连接池最大连接数（使用负值表示没有限制, 最佳配置为cpu核数+1）
+    max-active: 4
+    # 连接池中的最大空闲连接
+    max-idle: 8
+    # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    max-wait: 3
+mongodb:
+  url:
+  port:
+  db:
+  username:
+  password:
+# 登录相关配置
+login:
+  # 是否限制单用户登录
+  single: false
+# jwt
+jwt:
+  # 请求头前缀
+  header: Authorization
+  # 令牌前缀
+  token-start-with: Bearer
+  # 加密密钥
+  token-secret: i_odboy@1943815081@老男孩
+  # 令牌过期时间 此处单位: h , 默认4小时
+  token-expired: 4
+  # token在cookie中的别称
+  cookie-key: CuteGoToken
+  # 在线用户key
+  online-key: online-token-
+  # token 续期检查时间范围（默认30分钟, 单位毫秒）, 在token即将过期的一段时间内用户操作了, 则给用户的token续期
+  detect: 1800000
+  # 续期时间范围, 默认1小时, 单位: h
+  renew: 1
+logger:
+  # 最大保存时间(单位: d)
+  max-save-age: 7
+  # 日志切割时间间隔(单位: d)
+  rotation-time: 1
+  # 日志级别(debug, warn, info, error, fatal, panic, trace)
+  level: debug
