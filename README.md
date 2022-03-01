@@ -121,7 +121,7 @@ windows下面 PowerShell不行，要CMD
 
 #### 感谢（排名不分先后）
 
-- in框架 [https://github.com/gin-gonic/gin](https://github.com/gin-gonic/gin)
+- gin框架 [https://github.com/gin-gonic/gin](https://github.com/gin-gonic/gin)
 
 - gotool [https://github.com/druidcaesa/gotool](https://github.com/druidcaesa/gotool)
 
