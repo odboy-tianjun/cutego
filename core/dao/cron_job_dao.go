@@ -23,6 +23,9 @@ func (d CronJobDao) SelectPage(query request.CronJobQuery) ([]entity.SysCronJob,
 	if gotool.StrUtils.HasNotEmpty(query.JobName) {
 		session.And("job_name like concat('%', ?, '%')", query.JobName)
 	}
+	if gotool.StrUtils.HasNotEmpty(query.Status) {
+		session.And("status = ?", query.Status)
+	}
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&configs)
 	if err != nil {
@@ -60,23 +63,23 @@ func (d CronJobDao) SelectById(id int64) *entity.SysCronJob {
 
 // Update 修改数据
 func (d CronJobDao) Update(config entity.SysCronJob) int64 {
-	//session := SqlDB.NewSession()
-	//session.Begin()
-	//update, err := session.Where("job_id = ?", config.JobId).Update(&config)
-	//if err != nil {
-	//	common.ErrorLog(err)
-	//	session.Rollback()
-	//	return 0
-	//}
-	//session.Commit()
-	return CustomUpdateById("job_id", config.JobId, config)
+	session := SqlDB.NewSession()
+	session.Begin()
+	update, err := session.Where("job_id = ?", config.JobId).Update(&config)
+	if err != nil {
+		common.ErrorLog(err)
+		session.Rollback()
+		return 0
+	}
+	session.Commit()
+	return update
 }
 
 // Remove 删除数据
 func (d CronJobDao) Delete(list []int64) bool {
 	session := SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("config_id", list).Delete(&entity.SysCronJob{})
+	_, err := session.In("job_id", list).Delete(&entity.SysCronJob{})
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()

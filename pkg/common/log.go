@@ -6,6 +6,10 @@ func ErrorLog(v ...interface{}) {
 	gotool.Logs.ErrorLog().Println(v)
 }
 
+func ErrorLogf(format string, v ...interface{}) {
+	gotool.Logs.ErrorLog().Printf(format+"\n", v)
+}
+
 func FatalfLog(format string, v ...interface{}) {
 	gotool.Logs.ErrorLog().Fatalf(format, v)
 }

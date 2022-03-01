@@ -17,5 +17,5 @@ func RegisterFunc(aliasName string, f func()) {
 
 // 注册方法
 func init() {
-	//RegisterFunc("test1", TestJob)
+	RegisterFunc("test1", TestJob)
 }

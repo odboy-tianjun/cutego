@@ -6,7 +6,6 @@ import (
 	"cutego/core/service"
 	"cutego/pkg/common"
 	"github.com/robfig/cron"
-	"time"
 )
 
 // Cron表达式参考
@@ -23,18 +22,39 @@ import (
 // 定时任务: 别名与调度器的映射
 var AliasCronMap = make(map[string]*cron.Cron)
 
-// 停止任务, 不会停止已开始的任务
+// StopCronFunc 停止任务, 不会停止已开始的任务
 func StopCronFunc(aliasName string) {
 	common.InfoLogf("停止任务 %s ---> Start", aliasName)
 	AliasCronMap[aliasName].Stop()
 	common.InfoLogf("停止任务 %s ---> Finish", aliasName)
 }
 
-// 开始任务
+// StartCronFunc 开始任务
 func StartCronFunc(aliasName string) {
 	common.InfoLogf("唤起任务 %s ---> Start", aliasName)
 	AliasCronMap[aliasName].Start()
 	common.InfoLogf("唤起任务 %s ---> Finish", aliasName)
+}
+
+// RemoveCronFunc 移除任务
+func RemoveCronFunc(aliasName string) {
+	common.InfoLogf("移除任务 %s ---> Start", aliasName)
+	StopCronFunc(aliasName)
+	delete(AliasCronMap, aliasName)
+	common.InfoLogf("移除任务 %s ---> Finish", aliasName)
+}
+
+// AppendCronFunc 新增任务
+func AppendCronFunc(jobCron string, aliasName string, status string) {
+	common.InfoLogf("新增任务 %s ---> Start", aliasName)
+	c := cron.New()
+	c.AddFunc(jobCron, job.AliasFuncMap[aliasName])
+	if status == "1" {
+		c.Start()
+		common.InfoLogf("调度定时任务 --- %s ---> Success", aliasName)
+	}
+	AliasCronMap[aliasName] = c
+	common.InfoLogf("新增任务 %s ---> Finish", aliasName)
 }
 
 func init() {
@@ -49,22 +69,9 @@ func init() {
 				break
 			}
 			for _, datum := range data {
-				c := cron.New()
-				c.AddFunc(datum.JobCron, job.AliasFuncMap[datum.FuncAlias])
-				c.Start()
-
-				AliasCronMap[datum.FuncAlias] = c
-				common.InfoLogf("调度定时任务 --- %s ---> Success", datum.JobName)
+				AppendCronFunc(datum.JobCron, datum.FuncAlias, datum.Status)
 			}
 			index += 1
 		}
 	}
-}
-
-// 测试通过
-func test() {
-	time.Sleep(time.Second * 10)
-	StopCronFunc("test1")
-	time.Sleep(time.Second * 10)
-	StartCronFunc("test1")
 }

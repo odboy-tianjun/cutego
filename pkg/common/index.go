@@ -13,6 +13,30 @@ import (
 func IntToString(n int) string {
 	return strconv.Itoa(n)
 }
+
+// StringToInt string转int
+func StringToInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
+// StringToInt64 string转int64
+func StringToInt64(s string) int64 {
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
+// Int64ToString int64转string
+func Int64ToString(n int64) string {
+	return strconv.FormatInt(n, 10)
+}
+
 func mapToBytes(data map[string]interface{}) []byte {
 	bytes, _ := json.Marshal(data)
 	return bytes

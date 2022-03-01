@@ -113,21 +113,3 @@ func initConfig() {
 		}))
 	}
 }
-
-// 通用: 根据ID更新
-// @Param idColumnName 字段名称
-// @Param idColumnValue 字段值
-// @Param bean 更新的bean内容
-// @Return
-func CustomUpdateById(idColumnName string, idColumnValue interface{}, bean interface{}) int64 {
-	session := SqlDB.NewSession()
-	session.Begin()
-	update, err := session.Where(idColumnName+" = ?", idColumnValue).Update(&bean)
-	if err != nil {
-		common.ErrorLog(err)
-		session.Rollback()
-		return 0
-	}
-	session.Commit()
-	return update
-}
