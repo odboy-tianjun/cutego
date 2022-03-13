@@ -20,6 +20,7 @@ import (
 
 type ConfigApi struct {
 	configService service.ConfigService
+	logService    service.LogService
 }
 
 // GetConfigValue 根据参数键名查询参数值
@@ -35,6 +36,9 @@ func (a ConfigApi) GetConfigValue(c *gin.Context) {
 
 // List 查询设置列表
 func (a ConfigApi) List(c *gin.Context) {
+	a.logService.LogStart(c)
+	a.logService.LogToDB(c, "日志测试 start")
+
 	query := request.ConfigQuery{}
 	if c.Bind(&query) != nil {
 		resp.ParamError(c)
@@ -46,6 +50,7 @@ func (a ConfigApi) List(c *gin.Context) {
 		Total: i,
 		Size:  query.PageSize,
 	})
+	a.logService.LogToDB(c, "日志测试 end")
 }
 
 // Add 添加数据

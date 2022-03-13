@@ -6,6 +6,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/druidcaesa/gotool v0.0.0-20210722000450-b972ac6f3771
 	github.com/gin-gonic/gin v1.7.3
+	github.com/go-basic/uuid v1.0.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-xorm/xorm v0.7.9
 	github.com/gomodule/redigo v1.8.5
