@@ -1,4 +1,5 @@
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">CuteGo v1.0.0</h1>
+<img src="https://gitee.com/odboy/cutego/docs/images/logo.png">
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Version 1.0.0</h1>
 <h4 align="center">基于Gin、Xorm、Vue前后端分离的Go快速开发框架</h4>
 <p align="center">
 	<a href="https://gitee.com/odboy/cutego/stargazers"><img src="https://gitee.com/odboy/cutego/badge/star.svg?theme=dark"></a>
