@@ -48,14 +48,10 @@ CuteGo是一套全部开源的快速开发平台，毫无保留给个人及企�
   # 后执行
   $env:GOPROXY = "https://goproxy.io,direct"
   ```
-
-- 3、将docs下的configs目录移动到cutego目录下
-  ![Configs](docs/images/ConfigFile.png)
-
-- 4、idea配置如下
+- 3、idea配置如下
   ![Edit Configurations...](docs/images/RunConfig.png)
 
-- 5、下载依赖 go mod tidy
+- 4、下载依赖 go mod tidy
   ![Download Mod](docs/images/DownloadMod.png)
 
 #### 使用说明

@@ -39,8 +39,8 @@ func (s LoginInfoService) GetRequestClientIp(c *gin.Context) string {
 	return reqIP
 }
 
-// 纯真数据库获取ip地址
-// @return {"Ip": "180.89.94.90","Country": "北京市","City": "鹏博士宽带"}
+// GetLocationByIp 纯真数据库获取ip地址
+// @return {"Ip": "IP地址","Country": "国家","City": "城市"}
 func (s LoginInfoService) GetLocationByIp(ipAddr string) *qqwry.QQwry {
 	address := net.ParseIP(ipAddr)
 	if ipAddr == "" || address == nil {

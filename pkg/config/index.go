@@ -53,11 +53,10 @@ func LoadYamlFile(filename string, v interface{}) {
 	}
 }
 
-// 配置文件所在路径
-const BaseConfigDirPath = "configs"
+// BaseConfigDirPath 配置文件所在路径
+const BaseConfigDirPath = "resources"
 
 func readAppYmlFile(resourcePath string) {
-
 	// 读取主配置文件
 	applicationCoreFileName := BaseConfigDirPath + "/application.yml"
 	applicationCoreFilePath := resourcePath + GetPathSeparator() + applicationCoreFileName
