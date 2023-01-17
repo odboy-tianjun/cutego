@@ -8,6 +8,7 @@ import (
 	"cutego/pkg/config"
 	_ "cutego/pkg/cronjob"
 	"cutego/pkg/middleware/logger"
+	"cutego/pkg/util"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -26,16 +27,17 @@ func StartTest() {
 }
 
 func StartApp() {
-	switch config.AppEnvConfig.Server.RunMode {
-	case gin.DebugMode:
-		gin.SetMode(gin.DebugMode)
-		break
-	case gin.ReleaseMode:
-		gin.SetMode(gin.ReleaseMode)
-		break
-	default:
-		gin.SetMode(gin.DebugMode)
-	}
+	//switch config.AppEnvConfig.Server.RunMode {
+	//case gin.DebugMode:
+	//	gin.SetMode(gin.DebugMode)
+	//	break
+	//case gin.ReleaseMode:
+	//	gin.SetMode(gin.ReleaseMode)
+	//	break
+	//default:
+	//	gin.SetMode(gin.DebugMode)
+	//}
+	gin.SetMode(util.IF(config.AppEnvConfig.Server.RunMode == "", "debug", config.AppEnvConfig.Server.RunMode).(string))
 	r := router.Init()
 	r.Use(logger.LoggerToFile())
 	err := r.Run(fmt.Sprintf(":%d", config.AppEnvConfig.Server.Port))

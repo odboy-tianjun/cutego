@@ -10,7 +10,7 @@ datasource:
   host: 127.0.0.1
   port: 3306
   username: root
-  password: 123456
+  password: 12345678
   database: cutego
   charset: utf8
   max-idle-size: 10000
@@ -20,7 +20,7 @@ redis:
   database: 1
   host: 127.0.0.1
   port: 6379
-  password: xxxxxxxxxx
+  password:
   # 连接超时时间
   timeout: 5000
   pool:

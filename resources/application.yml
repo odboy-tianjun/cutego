@@ -28,9 +28,9 @@ cutego:
   # 文件存储路径, 一定要配置绝对路径, 相对路径测试后有一定的bug
   file:
     mac:
-      path: /Users/apple/.cutego/file/
-      avatar: /Users/apple/.cutego/avatar/
-      logs: /Users/apple/.cutego/logs
+      path: /Users/mac/.cutego/file/
+      avatar: /Users/mac/.cutego/avatar/
+      logs: /Users/mac/.cutego/logs
     linux:
       path: /home/root/.cutego/file/
       avatar: /home/root/.cutego/avatar/
