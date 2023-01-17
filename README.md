@@ -54,6 +54,9 @@ gitee地址:  https://gitee.com/odboy/cutego-ui
   ```
 - 3、idea配置如下
   ![Edit Configurations...](docs/images/RunConfig.png)
+    ```bash
+    Environment: GO111MODULE=on;GOPROXY=https://goproxy.cn,direct
+    ```
 
 - 4、下载依赖 go mod tidy
   ![Download Mod](docs/images/DownloadMod.png)
