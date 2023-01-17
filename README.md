@@ -22,7 +22,7 @@ CuteGo是一套全部开源的快速开发平台，毫无保留给个人及企�
 7. 参数管理：对系统动态配置常用参数
 8. 定时任务：定时调度执行方法, 方法注册在 core/job/index.go (调度日志 下次再写了)
 
-#### 配置前端   
+#### cutego前端   
 gitee地址:  https://gitee.com/odboy/cutego-ui   
 
 可参考ruoyi前端手册: http://doc.ruoyi.vip/ruoyi/document/qdsc.html   
