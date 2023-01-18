@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/dataobject"
+	"cutego/modules/core/entity"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
+	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 	"github.com/go-xorm/xorm"
 )
@@ -18,9 +18,9 @@ func (d DictTypeDao) sql(session *xorm.Session) *xorm.Session {
 }
 
 // SelectAll 查询所有字典类型数据
-func (d DictTypeDao) SelectAll() []*dataobject.SysDictType {
-	types := make([]*dataobject.SysDictType, 0)
-	err := d.sql(modules.SqlDB.NewSession()).Where("status = '0'").Find(&types)
+func (d DictTypeDao) SelectAll() []*entity.SysDictType {
+	types := make([]*entity.SysDictType, 0)
+	err := d.sql(refs.SqlDB.NewSession()).Where("status = '0'").Find(&types)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -29,9 +29,9 @@ func (d DictTypeDao) SelectAll() []*dataobject.SysDictType {
 }
 
 // SelectPage 分页查询字典类型数据
-func (d DictTypeDao) SelectPage(query request.DictTypeQuery) (*[]dataobject.SysDictType, int64) {
-	list := make([]dataobject.SysDictType, 0)
-	session := modules.SqlDB.NewSession().Table("sys_dict_type")
+func (d DictTypeDao) SelectPage(query request.DictTypeQuery) (*[]entity.SysDictType, int64) {
+	list := make([]entity.SysDictType, 0)
+	session := refs.SqlDB.NewSession().Table("sys_dict_type")
 	if gotool.StrUtils.HasNotEmpty(query.DictName) {
 		session.And("dict_name like concat('%', ?, '%')", query.DictName)
 	}
@@ -57,9 +57,9 @@ func (d DictTypeDao) SelectPage(query request.DictTypeQuery) (*[]dataobject.SysD
 }
 
 // SelectById 根据id查询字典类型数据
-func (d DictTypeDao) SelectById(id int64) *dataobject.SysDictType {
-	dictType := dataobject.SysDictType{}
-	_, err := modules.SqlDB.NewSession().Where("dict_id = ?", id).Get(&dictType)
+func (d DictTypeDao) SelectById(id int64) *entity.SysDictType {
+	dictType := entity.SysDictType{}
+	_, err := refs.SqlDB.NewSession().Where("dict_id = ?", id).Get(&dictType)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -68,8 +68,8 @@ func (d DictTypeDao) SelectById(id int64) *dataobject.SysDictType {
 }
 
 // CheckDictTypeUnique 检验字典类型是否存在
-func (d DictTypeDao) CheckDictTypeUnique(dictType dataobject.SysDictType) int64 {
-	session := modules.SqlDB.NewSession().Table("sys_dict_type")
+func (d DictTypeDao) CheckDictTypeUnique(dictType entity.SysDictType) int64 {
+	session := refs.SqlDB.NewSession().Table("sys_dict_type")
 	if dictType.DictId > 0 {
 		session.And("dict_id != ?", dictType.DictId)
 	}
@@ -82,8 +82,8 @@ func (d DictTypeDao) CheckDictTypeUnique(dictType dataobject.SysDictType) int64 
 }
 
 // Update 修改字典
-func (d DictTypeDao) Update(dictType dataobject.SysDictType) bool {
-	session := modules.SqlDB.NewSession()
+func (d DictTypeDao) Update(dictType entity.SysDictType) bool {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Where("dict_id = ?", dictType.DictId).Update(&dictType)
 	if err != nil {
@@ -96,8 +96,8 @@ func (d DictTypeDao) Update(dictType dataobject.SysDictType) bool {
 }
 
 // Insert 新增字典类型
-func (d DictTypeDao) Insert(dictType dataobject.SysDictType) int64 {
-	session := modules.SqlDB.NewSession()
+func (d DictTypeDao) Insert(dictType entity.SysDictType) int64 {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&dictType)
 	if err != nil {
@@ -111,9 +111,9 @@ func (d DictTypeDao) Insert(dictType dataobject.SysDictType) int64 {
 
 // Delete 批量删除
 func (d DictTypeDao) Delete(ids []int64) bool {
-	session := modules.SqlDB.NewSession()
+	session := refs.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("dict_id", ids).Delete(dataobject.SysDictType{})
+	_, err := session.In("dict_id", ids).Delete(entity.SysDictType{})
 	if err != nil {
 		session.Rollback()
 		common.ErrorLog(err)

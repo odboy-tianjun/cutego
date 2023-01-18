@@ -1,10 +1,10 @@
 package jwt
 
 import (
-	"cutego/modules"
 	"cutego/modules/core/api/v1/response"
 	"cutego/pkg/cache"
 	"cutego/pkg/config"
+	"cutego/refs"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -52,7 +52,7 @@ func JWTAuth() gin.HandlerFunc {
 		}
 		singleTag := config.AppEnvConfig.Login.Single
 		if singleTag {
-			token, err := modules.RedisDB.GET(claims.UserInfo.UserName)
+			token, err := refs.RedisDB.GET(claims.UserInfo.UserName)
 			if err == nil {
 				if !(token == currentTokenStr) {
 					c.JSON(http.StatusOK, gin.H{

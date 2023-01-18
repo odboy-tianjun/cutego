@@ -1,11 +1,12 @@
 package dao
 
 import (
-	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/dataobject"
+	"cutego/modules/core/entity"
 	"cutego/pkg/common"
+	"cutego/pkg/constant"
 	"cutego/pkg/page"
+	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 	"github.com/go-xorm/xorm"
 )
@@ -19,10 +20,10 @@ func (d *DictDataDao) sql(session *xorm.Session) *xorm.Session {
 
 // SelectByDictType 根据字典类型查询字典数据
 // @Param dictType string 字典类型
-// @Return []dataobject.SysDictData
-func (d *DictDataDao) SelectByDictType(dictType string) []dataobject.SysDictData {
-	data := make([]dataobject.SysDictData, 0)
-	session := d.sql(modules.SqlDB.NewSession())
+// @Return []entity.SysDictData
+func (d *DictDataDao) SelectByDictType(dictType string) []entity.SysDictData {
+	data := make([]entity.SysDictData, 0)
+	session := d.sql(refs.SqlDB.NewSession())
 	err := session.Where("status = '0' ").And("dict_type = ?", dictType).OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
@@ -33,10 +34,10 @@ func (d *DictDataDao) SelectByDictType(dictType string) []dataobject.SysDictData
 }
 
 // GetDiceDataAll 查询所有字典数据
-// @Return *[]dataobject.SysDictData
-func (d DictDataDao) GetDiceDataAll() *[]dataobject.SysDictData {
-	session := d.sql(modules.SqlDB.NewSession())
-	data := make([]dataobject.SysDictData, 0)
+// @Return *[]entity.SysDictData
+func (d DictDataDao) GetDiceDataAll() *[]entity.SysDictData {
+	session := d.sql(refs.SqlDB.NewSession())
+	data := make([]entity.SysDictData, 0)
 	err := session.Where("status = '0' ").OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
@@ -48,11 +49,11 @@ func (d DictDataDao) GetDiceDataAll() *[]dataobject.SysDictData {
 
 // SelectPage 查询集合数据
 // @Param query request.DiceDataQuery
-// @Return *[]dataobject.SysDictData
+// @Return *[]entity.SysDictData
 // @Return 总行数
-func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]dataobject.SysDictData, int64) {
-	list := make([]dataobject.SysDictData, 0)
-	session := modules.SqlDB.NewSession().Table("sys_dict_data").OrderBy("dict_sort").Asc("dict_sort")
+func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]entity.SysDictData, int64) {
+	list := make([]entity.SysDictData, 0)
+	session := refs.SqlDB.NewSession().Table("sys_dict_data").OrderBy("dict_sort").Asc("dict_sort")
 	if gotool.StrUtils.HasNotEmpty(query.DictType) {
 		session.And("dict_type = ?", query.DictType)
 	}
@@ -73,10 +74,10 @@ func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]dataobject.Sys
 
 // SelectByDictCode 根据dictCode查询字典数据
 // @Param dictCode int64
-// @Return *dataobject.SysDictData
-func (d *DictDataDao) SelectByDictCode(dictCode int64) *dataobject.SysDictData {
-	data := dataobject.SysDictData{}
-	session := modules.SqlDB.NewSession()
+// @Return *entity.SysDictData
+func (d *DictDataDao) SelectByDictCode(dictCode int64) *entity.SysDictData {
+	data := entity.SysDictData{}
+	session := refs.SqlDB.NewSession()
 	_, err := session.Where("dict_code = ?", dictCode).Get(&data)
 	if err != nil {
 		common.ErrorLog(err)
@@ -86,10 +87,10 @@ func (d *DictDataDao) SelectByDictCode(dictCode int64) *dataobject.SysDictData {
 }
 
 // Insert 添加字典数据
-// @Param data dataobject.SysDictData
+// @Param data entity.SysDictData
 // @Return 新增的行数
-func (d *DictDataDao) Insert(data dataobject.SysDictData) int64 {
-	session := modules.SqlDB.NewSession()
+func (d *DictDataDao) Insert(data entity.SysDictData) int64 {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&data)
 	if err != nil {
@@ -103,9 +104,9 @@ func (d *DictDataDao) Insert(data dataobject.SysDictData) int64 {
 
 // Delete 删除字典数据
 func (d *DictDataDao) Delete(codes []int64) bool {
-	session := modules.SqlDB.NewSession()
+	session := refs.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("dict_code", codes).Delete(&dataobject.SysDictData{})
+	_, err := session.In("dict_code", codes).Delete(&entity.SysDictData{})
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -116,8 +117,8 @@ func (d *DictDataDao) Delete(codes []int64) bool {
 }
 
 // 修改字典数据
-func (d *DictDataDao) Update(data dataobject.SysDictData) bool {
-	session := modules.SqlDB.NewSession()
+func (d *DictDataDao) Update(data entity.SysDictData) bool {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Where("dict_code = ?", data.DictCode).Update(&data)
 	if err != nil {
@@ -127,4 +128,29 @@ func (d *DictDataDao) Update(data dataobject.SysDictData) bool {
 	}
 	session.Commit()
 	return true
+}
+
+func init() {
+	// 查询字典类型数据
+	dictTypeDao := new(DictTypeDao)
+	typeAll := dictTypeDao.SelectAll()
+	// 所有字典数据
+	d := new(DictDataDao)
+	listData := d.GetDiceDataAll()
+	for _, dictType := range typeAll {
+		dictData := make([]map[string]interface{}, 0)
+		for _, data := range *listData {
+			if dictType.DictType == data.DictType {
+				dictData = append(dictData, map[string]interface{}{
+					"dictCode":  data.DictCode,
+					"dictSort":  data.DictSort,
+					"dictLabel": data.DictLabel,
+					"dictValue": data.DictValue,
+					"isDefault": data.IsDefault,
+					"remark":    data.Remark,
+				})
+			}
+		}
+		refs.RedisDB.SET(constant.RedisConst{}.GetRedisDictKey()+dictType.DictType, common.StructToJson(dictData))
+	}
 }

@@ -1,11 +1,12 @@
 package dao
 
 import (
-	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/dataobject"
+	"cutego/modules/core/entity"
 	"cutego/pkg/common"
+	"cutego/pkg/constant"
 	"cutego/pkg/page"
+	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 	"github.com/go-xorm/xorm"
 )
@@ -18,9 +19,9 @@ func (d ConfigDao) sql(session *xorm.Session) *xorm.Session {
 }
 
 // SelectByConfigKey 根据键名查询参数配置信息
-func (d ConfigDao) SelectByConfigKey(configKey string) *dataobject.SysConfig {
-	config := dataobject.SysConfig{}
-	_, err := d.sql(modules.SqlDB.NewSession()).Where("config_key = ?", configKey).Get(&config)
+func (d ConfigDao) SelectByConfigKey(configKey string) *entity.SysConfig {
+	config := entity.SysConfig{}
+	_, err := d.sql(refs.SqlDB.NewSession()).Where("config_key = ?", configKey).Get(&config)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -29,9 +30,9 @@ func (d ConfigDao) SelectByConfigKey(configKey string) *dataobject.SysConfig {
 }
 
 // SelectPage 分页查询数据
-func (d ConfigDao) SelectPage(query request.ConfigQuery) (*[]dataobject.SysConfig, int64) {
-	configs := make([]dataobject.SysConfig, 0)
-	session := d.sql(modules.SqlDB.NewSession())
+func (d ConfigDao) SelectPage(query request.ConfigQuery) (*[]entity.SysConfig, int64) {
+	configs := make([]entity.SysConfig, 0)
+	session := d.sql(refs.SqlDB.NewSession())
 	if gotool.StrUtils.HasNotEmpty(query.ConfigName) {
 		session.And("config_name like concat('%', ?, '%')", query.ConfigName)
 	}
@@ -57,8 +58,8 @@ func (d ConfigDao) SelectPage(query request.ConfigQuery) (*[]dataobject.SysConfi
 }
 
 // CheckConfigKeyUnique 校验是否存在
-func (d ConfigDao) CheckConfigKeyUnique(config dataobject.SysConfig) int64 {
-	session := d.sql(modules.SqlDB.NewSession())
+func (d ConfigDao) CheckConfigKeyUnique(config entity.SysConfig) int64 {
+	session := d.sql(refs.SqlDB.NewSession())
 	if config.ConfigId > 0 {
 		session.Where("config_id != ?", config.ConfigId)
 	}
@@ -71,8 +72,8 @@ func (d ConfigDao) CheckConfigKeyUnique(config dataobject.SysConfig) int64 {
 }
 
 // Insert 添加数据
-func (d ConfigDao) Insert(config dataobject.SysConfig) int64 {
-	session := modules.SqlDB.NewSession()
+func (d ConfigDao) Insert(config entity.SysConfig) int64 {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&config)
 	if err != nil {
@@ -85,9 +86,9 @@ func (d ConfigDao) Insert(config dataobject.SysConfig) int64 {
 }
 
 // SelectById 查询数据
-func (d ConfigDao) SelectById(id int64) *dataobject.SysConfig {
-	config := dataobject.SysConfig{}
-	session := d.sql(modules.SqlDB.NewSession())
+func (d ConfigDao) SelectById(id int64) *entity.SysConfig {
+	config := entity.SysConfig{}
+	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("config_id = ?", id).Get(&config)
 	if err != nil {
 		common.ErrorLog(err)
@@ -97,8 +98,8 @@ func (d ConfigDao) SelectById(id int64) *dataobject.SysConfig {
 }
 
 // Update 修改数据
-func (d ConfigDao) Update(config dataobject.SysConfig) int64 {
-	session := modules.SqlDB.NewSession()
+func (d ConfigDao) Update(config entity.SysConfig) int64 {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Where("config_id = ?", config.ConfigId).Update(&config)
 	if err != nil {
@@ -111,9 +112,9 @@ func (d ConfigDao) Update(config dataobject.SysConfig) int64 {
 }
 
 // CheckConfigByIds 根据id集合查询
-func (d ConfigDao) CheckConfigByIds(list []int64) *[]dataobject.SysConfig {
-	configs := make([]dataobject.SysConfig, 0)
-	err := d.sql(modules.SqlDB.NewSession()).In("config_id", list).Find(&configs)
+func (d ConfigDao) CheckConfigByIds(list []int64) *[]entity.SysConfig {
+	configs := make([]entity.SysConfig, 0)
+	err := d.sql(refs.SqlDB.NewSession()).In("config_id", list).Find(&configs)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -123,9 +124,9 @@ func (d ConfigDao) CheckConfigByIds(list []int64) *[]dataobject.SysConfig {
 
 // Remove 删除数据
 func (d ConfigDao) Delete(list []int64) bool {
-	session := modules.SqlDB.NewSession()
+	session := refs.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("config_id", list).Delete(&dataobject.SysConfig{})
+	_, err := session.In("config_id", list).Delete(&entity.SysConfig{})
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -136,13 +137,35 @@ func (d ConfigDao) Delete(list []int64) bool {
 }
 
 // SelectAll 查询所有数据
-func (d ConfigDao) SelectAll() *[]dataobject.SysConfig {
-	configs := make([]dataobject.SysConfig, 0)
-	session := modules.SqlDB.NewSession()
+func (d ConfigDao) SelectAll() *[]entity.SysConfig {
+	configs := make([]entity.SysConfig, 0)
+	session := refs.SqlDB.NewSession()
 	err := session.Find(&configs)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
 	}
 	return &configs
+}
+
+func init() {
+	// 查询配置数据存入到缓存中
+	configDao := new(ConfigDao)
+	configSession := configDao.sql(refs.SqlDB.NewSession())
+	configs := make([]*entity.SysConfig, 0)
+	err := configSession.Find(&configs)
+	if err != nil {
+		common.ErrorLog(err)
+		return
+	}
+	for _, sysConfig := range configs {
+		refs.RedisDB.SET(constant.RedisConst{}.GetRedisConfigKey()+sysConfig.ConfigKey, common.StructToJson(map[string]interface{}{
+			"configId":    sysConfig.ConfigId,
+			"configName":  sysConfig.ConfigName,
+			"configKey":   sysConfig.ConfigKey,
+			"configValue": sysConfig.ConfigValue,
+			"configType":  sysConfig.ConfigType,
+			"remark":      sysConfig.Remark,
+		}))
+	}
 }

@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/dataobject"
+	"cutego/modules/core/entity"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
+	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 	"github.com/go-xorm/xorm"
 )
@@ -18,9 +18,9 @@ func (d LogDao) sql(session *xorm.Session) *xorm.Session {
 }
 
 // SelectPage 分页查询数据
-func (d LogDao) SelectPage(query request.LogQuery) ([]dataobject.SysLog, int64) {
-	configs := make([]dataobject.SysLog, 0)
-	session := d.sql(modules.SqlDB.NewSession())
+func (d LogDao) SelectPage(query request.LogQuery) ([]entity.SysLog, int64) {
+	configs := make([]entity.SysLog, 0)
+	session := d.sql(refs.SqlDB.NewSession())
 	if gotool.StrUtils.HasNotEmpty(query.Content) {
 		session.And("content like concat('%', ?, '%')", query.Content)
 	}
@@ -37,8 +37,8 @@ func (d LogDao) SelectPage(query request.LogQuery) ([]dataobject.SysLog, int64) 
 }
 
 // Insert 添加数据
-func (d LogDao) Insert(config dataobject.SysLog) int64 {
-	session := modules.SqlDB.NewSession()
+func (d LogDao) Insert(config entity.SysLog) int64 {
+	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&config)
 	if err != nil {
