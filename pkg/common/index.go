@@ -137,7 +137,7 @@ func StructToJson(v interface{}) string {
 		return ""
 	}
 	s := string(jsonBytes)
-	DebugLogf("StructToJson, json=%s", s)
+	//DebugLogf("StructToJson, json=%s", s)
 	return s
 }
 
