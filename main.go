@@ -3,6 +3,7 @@ package main
 // init函数执行顺序自上而下, 最后执行main包里面的init函数
 import (
 	_ "cutego/core/dao"
+	_ "cutego/core/job"
 	"cutego/core/router"
 	"cutego/pkg/common"
 	"cutego/pkg/config"
@@ -14,29 +15,8 @@ import (
 )
 
 func main() {
-	StartTest()
-	StartApp()
-}
-func StartTest() {
-	fmt.Println("================ Test Content =================")
+	//go testChangeJob()
 
-	//cronjob.PrintCronNext()
-	//cronjob.ExecWithCronNext()
-
-	fmt.Println("================ Test Content =================")
-}
-
-func StartApp() {
-	//switch config.AppEnvConfig.Server.RunMode {
-	//case gin.DebugMode:
-	//	gin.SetMode(gin.DebugMode)
-	//	break
-	//case gin.ReleaseMode:
-	//	gin.SetMode(gin.ReleaseMode)
-	//	break
-	//default:
-	//	gin.SetMode(gin.DebugMode)
-	//}
 	gin.SetMode(util.IF(config.AppEnvConfig.Server.RunMode == "", "debug", config.AppEnvConfig.Server.RunMode).(string))
 	r := router.Init()
 	r.Use(logger.LoggerToFile())
@@ -45,3 +25,9 @@ func StartApp() {
 		common.FatalfLog("Start server: %+v", err)
 	}
 }
+
+//func testChangeJob() {
+//	time.Sleep(time.Millisecond * 5000)
+//	fmt.Println("改变任务调度间隔")
+//	cronjob.AppendCronFunc("*/5 * * * *", "test1", "1")
+//}

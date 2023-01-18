@@ -25,7 +25,7 @@ func (s CronJobService) GetInfo(id int64) *entity.SysCronJob {
 	return s.cronJobDao.SelectById(id)
 }
 
-// GetInfo 查询数据
+// GetInfoByAlias 查询数据
 func (s CronJobService) GetInfoByAlias(funcAlias string) *entity.SysCronJob {
 	return s.cronJobDao.SelectByFuncAlias(funcAlias)
 }
@@ -38,4 +38,9 @@ func (s CronJobService) Edit(config entity.SysCronJob) int64 {
 // Remove 批量删除
 func (s CronJobService) Remove(list []int64) bool {
 	return s.cronJobDao.Delete(list)
+}
+
+// FindAll 查找所有
+func (s CronJobService) FindAll() ([]entity.SysCronJob, int) {
+	return s.cronJobDao.SelectAll()
 }

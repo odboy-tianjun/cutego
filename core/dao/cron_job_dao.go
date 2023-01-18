@@ -75,7 +75,7 @@ func (d CronJobDao) Update(config entity.SysCronJob) int64 {
 	return update
 }
 
-// Remove 删除数据
+// Delete 删除数据
 func (d CronJobDao) Delete(list []int64) bool {
 	session := SqlDB.NewSession()
 	session.Begin()
@@ -89,7 +89,7 @@ func (d CronJobDao) Delete(list []int64) bool {
 	return true
 }
 
-// 通过方法别名获取任务详情
+// SelectByFuncAlias 通过方法别名获取任务详情
 func (d CronJobDao) SelectByFuncAlias(funcAlias string) *entity.SysCronJob {
 	config := entity.SysCronJob{}
 	session := d.sql(SqlDB.NewSession())
@@ -99,4 +99,16 @@ func (d CronJobDao) SelectByFuncAlias(funcAlias string) *entity.SysCronJob {
 		return nil
 	}
 	return &config
+}
+
+// SelectAll 查找所有启用状态的任务
+func (d CronJobDao) SelectAll() ([]entity.SysCronJob, int) {
+	configs := make([]entity.SysCronJob, 0)
+	session := d.sql(SqlDB.NewSession())
+	err := session.Where("status = ?", 1).Find(&configs)
+	if err != nil {
+		common.ErrorLog(err)
+		return nil, 0
+	}
+	return configs, len(configs)
 }

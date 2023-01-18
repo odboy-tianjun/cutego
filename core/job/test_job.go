@@ -2,6 +2,6 @@ package job
 
 import "fmt"
 
-func TestJob() {
-	fmt.Println("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
+func TestJob1() {
+	fmt.Println("无参数任务执行中...")
 }
