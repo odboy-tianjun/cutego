@@ -2,7 +2,7 @@ package dao
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"cutego/refs"
@@ -18,8 +18,8 @@ func (d CronJobDao) sql(session *xorm.Session) *xorm.Session {
 }
 
 // SelectPage 分页查询数据
-func (d CronJobDao) SelectPage(query request.CronJobQuery) ([]entity.SysCronJob, int64) {
-	configs := make([]entity.SysCronJob, 0)
+func (d CronJobDao) SelectPage(query request.CronJobQuery) ([]dataobject.SysCronJob, int64) {
+	configs := make([]dataobject.SysCronJob, 0)
 	session := d.sql(refs.SqlDB.NewSession())
 	if gotool.StrUtils.HasNotEmpty(query.JobName) {
 		session.And("job_name like concat('%', ?, '%')", query.JobName)
@@ -37,7 +37,7 @@ func (d CronJobDao) SelectPage(query request.CronJobQuery) ([]entity.SysCronJob,
 }
 
 // Insert 添加数据
-func (d CronJobDao) Insert(config entity.SysCronJob) int64 {
+func (d CronJobDao) Insert(config dataobject.SysCronJob) int64 {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&config)
@@ -51,8 +51,8 @@ func (d CronJobDao) Insert(config entity.SysCronJob) int64 {
 }
 
 // SelectById 查询数据
-func (d CronJobDao) SelectById(id int64) *entity.SysCronJob {
-	config := entity.SysCronJob{}
+func (d CronJobDao) SelectById(id int64) *dataobject.SysCronJob {
+	config := dataobject.SysCronJob{}
 	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("job_id = ?", id).Get(&config)
 	if err != nil {
@@ -63,7 +63,7 @@ func (d CronJobDao) SelectById(id int64) *entity.SysCronJob {
 }
 
 // Update 修改数据
-func (d CronJobDao) Update(config entity.SysCronJob) int64 {
+func (d CronJobDao) Update(config dataobject.SysCronJob) int64 {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Where("job_id = ?", config.JobId).Update(&config)
@@ -80,7 +80,7 @@ func (d CronJobDao) Update(config entity.SysCronJob) int64 {
 func (d CronJobDao) Delete(list []int64) bool {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("job_id", list).Delete(&entity.SysCronJob{})
+	_, err := session.In("job_id", list).Delete(&dataobject.SysCronJob{})
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -91,8 +91,8 @@ func (d CronJobDao) Delete(list []int64) bool {
 }
 
 // SelectByFuncAlias 通过方法别名获取任务详情
-func (d CronJobDao) SelectByFuncAlias(funcAlias string) *entity.SysCronJob {
-	config := entity.SysCronJob{}
+func (d CronJobDao) SelectByFuncAlias(funcAlias string) *dataobject.SysCronJob {
+	config := dataobject.SysCronJob{}
 	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("func_alias = ?", funcAlias).Get(&config)
 	if err != nil {
@@ -103,8 +103,8 @@ func (d CronJobDao) SelectByFuncAlias(funcAlias string) *entity.SysCronJob {
 }
 
 // SelectAll 查找所有启用状态的任务
-func (d CronJobDao) SelectAll() ([]entity.SysCronJob, int) {
-	configs := make([]entity.SysCronJob, 0)
+func (d CronJobDao) SelectAll() ([]dataobject.SysCronJob, int) {
+	configs := make([]dataobject.SysCronJob, 0)
 	session := d.sql(refs.SqlDB.NewSession())
 	err := session.Where("status = ?", 1).Find(&configs)
 	if err != nil {

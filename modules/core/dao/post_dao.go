@@ -2,7 +2,7 @@ package dao
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"cutego/refs"
@@ -20,9 +20,9 @@ func (d PostDao) sqlSelectJoin(session *xorm.Session) *xorm.Session {
 }
 
 // SelectAll 查询所有岗位数据, 数据库操作
-func (d PostDao) SelectAll() []*entity.SysPost {
+func (d PostDao) SelectAll() []*dataobject.SysPost {
 	session := refs.SqlDB.NewSession()
-	posts := make([]*entity.SysPost, 0)
+	posts := make([]*dataobject.SysPost, 0)
 	err := session.Find(&posts)
 	if err != nil {
 		common.ErrorLog(err)
@@ -44,9 +44,9 @@ func (d PostDao) SelectPostListByUserId(userId int64) *[]int64 {
 }
 
 // SelectPage 查询岗位分页数据
-func (d PostDao) SelectPage(query request.PostQuery) (*[]entity.SysPost, int64) {
-	posts := make([]entity.SysPost, 0)
-	session := refs.SqlDB.NewSession().Table(entity.SysPost{}.TableName())
+func (d PostDao) SelectPage(query request.PostQuery) (*[]dataobject.SysPost, int64) {
+	posts := make([]dataobject.SysPost, 0)
+	session := refs.SqlDB.NewSession().Table(dataobject.SysPost{}.TableName())
 	if gotool.StrUtils.HasNotEmpty(query.PostCode) {
 		session.And("post_code like concat('%', ?, '%')", query.PostCode)
 	}
@@ -66,7 +66,7 @@ func (d PostDao) SelectPage(query request.PostQuery) (*[]entity.SysPost, int64) 
 }
 
 // CheckPostNameUnique 校验岗位名称是否存在
-func (d PostDao) CheckPostNameUnique(post entity.SysPost) int64 {
+func (d PostDao) CheckPostNameUnique(post dataobject.SysPost) int64 {
 	session := refs.SqlDB.NewSession().Table("sys_post").Cols("post_id").
 		Where("post_name = ?", post.PostName)
 	if post.PostId > 0 {
@@ -77,7 +77,7 @@ func (d PostDao) CheckPostNameUnique(post entity.SysPost) int64 {
 }
 
 // CheckPostCodeUnique 校验岗位编码是否存在
-func (d PostDao) CheckPostCodeUnique(post entity.SysPost) int64 {
+func (d PostDao) CheckPostCodeUnique(post dataobject.SysPost) int64 {
 	session := refs.SqlDB.NewSession().Table("sys_post").Cols("post_id").
 		Where("post_code = ?", post.PostCode)
 	if post.PostId > 0 {
@@ -88,7 +88,7 @@ func (d PostDao) CheckPostCodeUnique(post entity.SysPost) int64 {
 }
 
 // Insert 添加岗位数据
-func (d PostDao) Insert(post entity.SysPost) int64 {
+func (d PostDao) Insert(post dataobject.SysPost) int64 {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&post)
@@ -102,7 +102,7 @@ func (d PostDao) Insert(post entity.SysPost) int64 {
 }
 
 // GetPostById 根据id查询岗位数据
-func (d PostDao) GetPostById(post entity.SysPost) *entity.SysPost {
+func (d PostDao) GetPostById(post dataobject.SysPost) *dataobject.SysPost {
 	_, err := refs.SqlDB.NewSession().Where("post_id = ?", post.PostId).Get(&post)
 	if err != nil {
 		common.ErrorLog(err)
@@ -116,7 +116,7 @@ func (d PostDao) Delete(posts []int64) int64 {
 
 	session := refs.SqlDB.NewSession()
 	session.Begin()
-	i, err := session.In("post_id", posts).Delete(&entity.SysPost{})
+	i, err := session.In("post_id", posts).Delete(&dataobject.SysPost{})
 	if err != nil {
 		session.Rollback()
 		common.ErrorLog(err)
@@ -127,7 +127,7 @@ func (d PostDao) Delete(posts []int64) int64 {
 }
 
 // Update 修改岗位数据
-func (d PostDao) Update(post entity.SysPost) bool {
+func (d PostDao) Update(post dataobject.SysPost) bool {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Where("post_id = ?", post.PostId).Update(&post)
@@ -140,9 +140,9 @@ func (d PostDao) Update(post entity.SysPost) bool {
 	return true
 }
 
-func (d PostDao) SelectPostByUserName(name string) *[]entity.SysPost {
-	posts := make([]entity.SysPost, 0)
-	session := refs.SqlDB.NewSession().Table([]string{entity.SysPost{}.TableName(), "p"})
+func (d PostDao) SelectPostByUserName(name string) *[]dataobject.SysPost {
+	posts := make([]dataobject.SysPost, 0)
+	session := refs.SqlDB.NewSession().Table([]string{dataobject.SysPost{}.TableName(), "p"})
 	err := session.Cols("p.post_id", "p.post_name", "p.post_code").
 		Join("LEFT", []string{"sys_user_post", "up"}, "up.post_id = p.post_id").
 		Join("LEFT", []string{"sys_user", "u"}, "u.user_id = up.user_id").Where("u.user_name = ?", name).Find(&posts)

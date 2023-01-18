@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/refs"
 )
@@ -10,10 +10,10 @@ type UserPostDao struct {
 }
 
 // BatchInsert 批量新增用户岗位信息
-func (d UserPostDao) BatchInsert(posts []entity.SysUserPost) {
+func (d UserPostDao) BatchInsert(posts []dataobject.SysUserPost) {
 	session := refs.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.Table(entity.SysUserPost{}.TableName()).Insert(&posts)
+	_, err := session.Table(dataobject.SysUserPost{}.TableName()).Insert(&posts)
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -24,7 +24,7 @@ func (d UserPostDao) BatchInsert(posts []entity.SysUserPost) {
 
 // Delete 删除用户和岗位关系
 func (d UserPostDao) Delete(id int64) {
-	post := entity.SysUserPost{
+	post := dataobject.SysUserPost{
 		UserId: id,
 	}
 	session := refs.SqlDB.NewSession()

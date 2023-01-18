@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"cutego/refs"
@@ -68,7 +68,7 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 }
 
 // GetUserByUserName 根据用户名查询用户数据
-func (d UserDao) GetUserByUserName(user entity.SysUser) *entity.SysUser {
+func (d UserDao) GetUserByUserName(user dataobject.SysUser) *dataobject.SysUser {
 	i, err := refs.SqlDB.Get(&user)
 	if err != nil {
 		common.ErrorLog(err)
@@ -81,8 +81,8 @@ func (d UserDao) GetUserByUserName(user entity.SysUser) *entity.SysUser {
 }
 
 // CheckEmailUnique 校验邮箱是否存在
-func (d UserDao) CheckEmailUnique(user request.UserBody) *entity.SysUser {
-	sysUser := entity.SysUser{}
+func (d UserDao) CheckEmailUnique(user request.UserBody) *dataobject.SysUser {
+	sysUser := dataobject.SysUser{}
 	session := refs.SqlDB.NewSession().Table("sys_user")
 	session.Cols("user_id", "email")
 	session.Where("email = ?", user.Email)
@@ -97,8 +97,8 @@ func (d UserDao) CheckEmailUnique(user request.UserBody) *entity.SysUser {
 }
 
 // CheckPhoneNumUnique 校验手机号是否存在
-func (d UserDao) CheckPhoneNumUnique(body request.UserBody) *entity.SysUser {
-	sysUser := entity.SysUser{}
+func (d UserDao) CheckPhoneNumUnique(body request.UserBody) *dataobject.SysUser {
+	sysUser := dataobject.SysUser{}
 	session := refs.SqlDB.NewSession().Table("sys_user")
 	session.Cols("user_id", "phone_num")
 	session.Where("phone_num = ?", body.PhoneNumber)
@@ -141,7 +141,7 @@ func (d UserDao) Update(body request.UserBody) int64 {
 
 // Delete 根据id删除用户数据
 func (d UserDao) Delete(id int64) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId: id,
 	}
 	session := refs.SqlDB.NewSession().Table("sys_user")
@@ -157,7 +157,7 @@ func (d UserDao) Delete(id int64) int64 {
 
 // ResetPwd 修改用户密码数据库操作
 func (d UserDao) ResetPwd(body request.UserBody) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId:   body.UserId,
 		Password: body.Password,
 	}
@@ -222,7 +222,7 @@ func (d UserDao) GetUnallocatedList(query request.UserQuery) ([]*response.UserRe
 
 // UpdatePwd 修改密码
 func (d UserDao) UpdatePwd(id int64, hash string) int64 {
-	user := entity.SysUser{}
+	user := dataobject.SysUser{}
 	user.UserId = id
 	user.Password = hash
 	session := refs.SqlDB.NewSession()
@@ -239,7 +239,7 @@ func (d UserDao) UpdatePwd(id int64, hash string) int64 {
 
 // UpdateAvatar 修改头像
 func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		Avatar:     info.Avatar,
 		UserId:     info.UserId,
 		UpdateBy:   info.UserName,
@@ -258,7 +258,7 @@ func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
 }
 
 func (d UserDao) UpdateStatus(info request.UserBody) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId:     info.UserId,
 		Status:     info.Status,
 		UpdateBy:   info.UserName,
