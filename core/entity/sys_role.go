@@ -14,7 +14,7 @@ type SysRole struct {
 	DelFlag           string    `excel:"" xorm:"char(1)" json:"delFlag"`                          // 删除标记0正常1删除
 	CreateTime        time.Time `excel:"" xorm:"created" json:"createTime"`                       // 创建时间
 	CreateBy          string    `excel:"" json:"createBy"`                                        // 创建人
-	UpdateTime        time.Time `excel:"" json:"updateTime"`                                      // 更新时间
+	UpdateTime        time.Time `excel:"" xorm:"updated" json:"updateTime"`                       // 更新时间
 	UpdateBy          string    `excel:"" json:"updateBy"`                                        // 更新人
 	Remark            string    `excel:"" json:"remark"`                                          // 备注
 	MenuIds           []int64   `xorm:"-" json:"menuIds"`                                         // 菜单组

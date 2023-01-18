@@ -21,7 +21,7 @@ type SysMenu struct {
 	Remark     string    `xorm:"varchar(512)" json:"remark"`    // 备注
 	CreateTime time.Time `xorm:"created" json:"createTime"`     // 创建时间
 	CreateBy   string    `json:"createBy"`                      // 创建人
-	UpdateTime time.Time `json:"updateTime"`                    // 更新时间
+	UpdateTime time.Time `xorm:"updated" json:"updateTime"`     // 更新时间
 	UpdateBy   string    `json:"updateBy"`                      // 更新人
 	Status     string    `xorm:"char(1)" json:"status"`         // 菜单状态（0正常 1停用）
 	Component  string    `xorm:"varchar(255)" json:"component"` // 组件路径

@@ -16,7 +16,7 @@ type SysDept struct {
 	DelFlag    string    `xorm:"char(1) default('0')" json:"delFlag"`
 	CreateTime time.Time `xorm:"created" json:"createTime"` // 创建时间
 	CreateBy   string    `json:"createBy"`                  // 创建人
-	UpdateTime time.Time `json:"updateTime"`                // 更新时间
+	UpdateTime time.Time `xorm:"updated" json:"updateTime"` // 更新时间
 	UpdateBy   string    `json:"updateBy"`                  // 更新人
 }
 

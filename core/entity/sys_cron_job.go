@@ -14,7 +14,7 @@ type SysCronJob struct {
 	CreateBy   string    `xorm:"varchar(64)"`                   // 创建人
 	CreateTime time.Time `xorm:"created"`                       // 创建时间
 	UpdateBy   string    `xorm:"varchar(64)"`                   // 更新人
-	UpdateTime time.Time `xorm:"datetime"`                      // 更新时间
+	UpdateTime time.Time `xorm:"updated"`                       // 更新时间
 	Remark     string    `xorm:"varchar(500)" json:"remark"`    // 备注
 }
 
