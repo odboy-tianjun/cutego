@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -28,7 +28,7 @@ func (d NoticeDao) SelectPage(query request.NoticeQuery) (*[]dataobject.SysNotic
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&notices)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &notices, total
@@ -41,7 +41,7 @@ func (d NoticeDao) Insert(notice dataobject.SysNotice) int64 {
 	insert, err := session.Insert(&notice)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -55,7 +55,7 @@ func (d NoticeDao) Delete(list []int64) int64 {
 	i, err := session.In("notice_id", list).Delete(&dataobject.SysNotice{})
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -67,7 +67,7 @@ func (d NoticeDao) SelectById(id int64) *dataobject.SysNotice {
 	notice := dataobject.SysNotice{}
 	_, err := refs.SqlDB.NewSession().Where("notice_id = ?", id).Get(&notice)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &notice
@@ -80,7 +80,7 @@ func (d NoticeDao) Update(notice dataobject.SysNotice) int64 {
 	update, err := session.Where("notice_id = ?", notice.NoticeId).Update(&notice)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()

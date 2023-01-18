@@ -5,6 +5,7 @@ import (
 	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/constant"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -27,7 +28,7 @@ func (d *DictDataDao) SelectByDictType(dictType string) []dataobject.SysDictData
 	err := session.Where("status = '0' ").And("dict_type = ?", dictType).OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return data
@@ -41,7 +42,7 @@ func (d DictDataDao) GetDiceDataAll() *[]dataobject.SysDictData {
 	err := session.Where("status = '0' ").OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &data
@@ -66,7 +67,7 @@ func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]dataobject.Sys
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &list, total
@@ -80,7 +81,7 @@ func (d *DictDataDao) SelectByDictCode(dictCode int64) *dataobject.SysDictData {
 	session := refs.SqlDB.NewSession()
 	_, err := session.Where("dict_code = ?", dictCode).Get(&data)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &data
@@ -95,7 +96,7 @@ func (d *DictDataDao) Insert(data dataobject.SysDictData) int64 {
 	insert, err := session.Insert(&data)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -108,7 +109,7 @@ func (d *DictDataDao) Delete(codes []int64) bool {
 	session.Begin()
 	_, err := session.In("dict_code", codes).Delete(&dataobject.SysDictData{})
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return false
 	}
@@ -123,7 +124,7 @@ func (d *DictDataDao) Update(data dataobject.SysDictData) bool {
 	_, err := session.Where("dict_code = ?", data.DictCode).Update(&data)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return false
 	}
 	session.Commit()

@@ -3,6 +3,7 @@ package logger
 import (
 	"cutego/pkg/common"
 	"cutego/pkg/config"
+	"cutego/pkg/logging"
 	"fmt"
 	"github.com/druidcaesa/gotool"
 	"github.com/gin-gonic/gin"
@@ -16,18 +17,18 @@ import (
 
 // LoggerToFile 日志记录到文件
 func LoggerToFile() gin.HandlerFunc {
-	dirPath := common.GetDirPath("log")
-	fileName := path.Join(dirPath, "application.log")
+	dirPath := common.GetDirPath("logging")
+	fileName := path.Join(dirPath, "application.logging")
 	if !common.IsFileOrDirExist(dirPath) {
 		err := common.CreateAllDir(dirPath)
 		if err != nil {
-			common.ErrorLog(err)
+			logging.ErrorLog(err)
 		}
 	}
 	if !gotool.FileUtils.Exists(fileName) {
 		create, err := os.Create(fileName)
 		if err != nil {
-			common.ErrorLog(err)
+			logging.ErrorLog(err)
 		}
 		defer create.Close()
 	}

@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 )
@@ -21,7 +21,7 @@ func (d MenuDao) GetMenuPermission(id int64) *[]string {
 		Join("LEFT", []string{"sys_role", "r"}, "r.role_id = ur.role_id").
 		Where("m.status = '0'").And("r.status = '0'").And("ur.user_id = ?", id).Find(&perms)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &perms
@@ -34,7 +34,7 @@ func (d MenuDao) GetMenuAll() *[]dataobject.SysMenu {
 	err := session.Distinct("m.menu_id").Cols("m.parent_id", "m.menu_name", "m.path", "m.component", "m.visible", "m.status", "m.perms", "m.is_frame", "m.is_cache", "m.menu_type", "m.icon", "m.order_num", "m.create_time").
 		Where("m.menu_type in ('M', 'C')").And("m.status = 0").OrderBy("m.parent_id").OrderBy("m.order_num").Find(&menus)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &menus
@@ -51,7 +51,7 @@ func (d MenuDao) GetMenuByUserId(id int64) *[]dataobject.SysMenu {
 		Join("LEFT", []string{"sys_user", "u"}, "ur.user_id = u.user_id").Where("u.user_id = ?", id).
 		And("m.menu_type in ('M', 'C')").And("m.status = 0").OrderBy("m.parent_id").OrderBy("m.order_num").Find(&menus)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &menus
@@ -68,7 +68,7 @@ func (d MenuDao) SelectMenuByRoleId(id int64, strictly bool) *[]int64 {
 	}
 	err := session.OrderBy("m.parent_id").OrderBy("m.order_num").Cols("m.menu_id").Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &list
@@ -89,7 +89,7 @@ func (d MenuDao) SelectMenuList(query request.MenuQuery) *[]dataobject.SysMenu {
 	}
 	err := session.Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &list
@@ -115,7 +115,7 @@ func (d MenuDao) SelectMenuListByUserId(query request.MenuQuery) *[]dataobject.S
 	}
 	err := session.Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &list
@@ -128,7 +128,7 @@ func (d MenuDao) SelectMenuByMenuId(id int) *dataobject.SysMenu {
 	}
 	_, err := refs.SqlDB.NewSession().Where("menu_id = ?", menu.MenuId).Get(&menu)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &menu
@@ -140,7 +140,7 @@ func (d MenuDao) Insert(menu dataobject.SysMenu) int64 {
 	session.Begin()
 	insert, err := session.Insert(&menu)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -154,7 +154,7 @@ func (d MenuDao) Update(menu dataobject.SysMenu) int64 {
 	session.Begin()
 	update, err := session.Where("menu_id = ?", menu.MenuId).Update(&menu)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -171,7 +171,7 @@ func (d MenuDao) Delete(id int) int64 {
 	session.Begin()
 	i, err := session.Delete(&menu)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}

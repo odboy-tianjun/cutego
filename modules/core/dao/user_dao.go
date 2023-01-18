@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -48,7 +48,7 @@ func (d UserDao) SelectPage(query request.UserQuery) ([]*response.UserResponse, 
 	total, _ := page.GetTotal(sql.Clone())
 	err := sql.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return resp, total
@@ -59,7 +59,7 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 	var resp response.UserResponse
 	get, err := d.sqlSelectJoin().Where("u.user_id = ?", userId).Get(&resp)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 	}
 	if !get {
 		return nil
@@ -71,7 +71,7 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 func (d UserDao) GetUserByUserName(user dataobject.SysUser) *dataobject.SysUser {
 	i, err := refs.SqlDB.Get(&user)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	if i {
@@ -118,7 +118,7 @@ func (d UserDao) Insert(body request.UserBody) *request.UserBody {
 	session.Begin()
 	_, err := session.Table("sys_user").Insert(&body)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -132,7 +132,7 @@ func (d UserDao) Update(body request.UserBody) int64 {
 	_, err := session.Where("user_id = ?", body.UserId).Update(&body)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -148,7 +148,7 @@ func (d UserDao) Delete(id int64) int64 {
 	session.Begin()
 	i, err := session.Delete(&user)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -165,7 +165,7 @@ func (d UserDao) ResetPwd(body request.UserBody) int64 {
 	session.Begin()
 	_, err := session.Where("user_id = ?", user.UserId).Cols("password").Update(&user)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -190,7 +190,7 @@ func (d UserDao) GetAllocatedList(query request.UserQuery) ([]*response.UserResp
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return resp, total
@@ -214,7 +214,7 @@ func (d UserDao) GetUnallocatedList(query request.UserQuery) ([]*response.UserRe
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return resp, total
@@ -229,7 +229,7 @@ func (d UserDao) UpdatePwd(id int64, hash string) int64 {
 	session.Begin()
 	update, err := session.Cols("password").Where("user_id = ?", id).Update(&user)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -250,7 +250,7 @@ func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
 	update, err := session.Cols("avatar", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -269,7 +269,7 @@ func (d UserDao) UpdateStatus(info request.UserBody) int64 {
 	update, err := session.Cols("status", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()

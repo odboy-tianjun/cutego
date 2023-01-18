@@ -3,7 +3,7 @@ package cronjob
 import (
 	"cutego/modules/core/job"
 	"cutego/modules/core/service"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"github.com/robfig/cron"
 )
 
@@ -23,24 +23,24 @@ var aliasCronMap = make(map[string]*cron.Cron)
 
 // StopCronFunc 停止任务, 不会停止已开始的任务
 func StopCronFunc(aliasName string) {
-	common.InfoLogf("停止任务 %s ---> Start", aliasName)
+	logging.InfoLogf("停止任务 %s ---> Start", aliasName)
 	go aliasCronMap[aliasName].Stop()
-	common.InfoLogf("停止任务 %s ---> Finish", aliasName)
+	logging.InfoLogf("停止任务 %s ---> Finish", aliasName)
 }
 
 // StartCronFunc 开始任务
 func StartCronFunc(aliasName string) {
-	common.InfoLogf("唤起任务 %s ---> Start", aliasName)
+	logging.InfoLogf("唤起任务 %s ---> Start", aliasName)
 	go aliasCronMap[aliasName].Start()
-	common.InfoLogf("唤起任务 %s ---> Finish", aliasName)
+	logging.InfoLogf("唤起任务 %s ---> Finish", aliasName)
 }
 
 // RemoveCronFunc 移除任务
 func RemoveCronFunc(aliasName string) {
-	common.InfoLogf("移除任务 %s ---> Start", aliasName)
+	logging.InfoLogf("移除任务 %s ---> Start", aliasName)
 	go StopCronFunc(aliasName)
 	delete(aliasCronMap, aliasName)
-	common.InfoLogf("移除任务 %s ---> Finish", aliasName)
+	logging.InfoLogf("移除任务 %s ---> Finish", aliasName)
 }
 
 // AppendCronFunc 新增任务
@@ -49,7 +49,7 @@ func AppendCronFunc(jobCron string, aliasName string, status string) {
 		aliasCronMap[aliasName].Stop()
 		aliasCronMap[aliasName] = nil
 	}
-	common.InfoLogf("新增任务 %s ---> Start", aliasName)
+	logging.InfoLogf("新增任务 %s ---> Start", aliasName)
 	c := cron.New()
 	err := c.AddFunc(jobCron, job.AliasFuncMap[aliasName])
 	if err != nil {
@@ -59,10 +59,10 @@ func AppendCronFunc(jobCron string, aliasName string, status string) {
 		go func() {
 			c.Start()
 			aliasCronMap[aliasName] = c
-			common.InfoLogf("调度定时任务 --- %s ---> Success", aliasName)
+			logging.InfoLogf("调度定时任务 --- %s ---> Success", aliasName)
 		}()
 	}
-	common.InfoLogf("新增任务 %s ---> Finish", aliasName)
+	logging.InfoLogf("新增任务 %s ---> Finish", aliasName)
 }
 
 func init() {

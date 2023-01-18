@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/go-xorm/xorm"
@@ -25,7 +25,7 @@ func (d LoginInfoDao) SelectPage(query request.LoginInfoQuery) (*[]dataobject.Sy
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&loginInfos)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &loginInfos, total
@@ -37,7 +37,7 @@ func (d LoginInfoDao) Insert(body dataobject.SysLoginInfo) *dataobject.SysLoginI
 	session.Begin()
 	_, err := session.Table("sys_login_info").Insert(&body)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 	}
 	session.Commit()

@@ -4,16 +4,16 @@ import (
 	"cutego/modules/core/router"
 	"cutego/pkg/filter"
 	"cutego/pkg/jwt"
+	"cutego/pkg/logging"
 	"cutego/pkg/middleware"
 	"cutego/pkg/middleware/logger"
 	"cutego/pkg/websocket"
 	"cutego/refs"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	fmt.Println("CoolGin init...")
+	logging.InfoLog("CoolGin init start...")
 	refs.CoolGin = gin.New()
 	refs.CoolGin.Use(gin.Logger())
 	refs.CoolGin.Use(gin.Recovery())
@@ -27,4 +27,5 @@ func init() {
 	v1Router := refs.CoolGin.Group("/api/v1")
 	// 加载: 模块路由
 	router.LoadCoreRouter(v1Router)
+	logging.InfoLog("CoolGin init end...")
 }

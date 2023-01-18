@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
 )
@@ -26,7 +26,7 @@ func (d DeptDao) SelectTree(query request.DeptQuery) *[]dataobject.SysDept {
 	}
 	err := session.OrderBy("parent_id").OrderBy("order_num").Find(&depts)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &depts
@@ -43,7 +43,7 @@ func (d DeptDao) SelectDeptListByRoleId(id int64, strictly bool) *[]int64 {
 	}
 	err := session.OrderBy("d.parent_id").OrderBy("d.order_num").Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &list
@@ -65,7 +65,7 @@ func (d DeptDao) GetList(query request.DeptQuery) *[]dataobject.SysDept {
 	}
 	err := session.Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &list
@@ -76,7 +76,7 @@ func (d DeptDao) SelectDeptById(id int) *dataobject.SysDept {
 	dept := dataobject.SysDept{}
 	_, err := refs.SqlDB.NewSession().Where("dept_id = ?", id).Get(&dept)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &dept
@@ -88,7 +88,7 @@ func (d DeptDao) Insert(dept dataobject.SysDept) int64 {
 	session.Begin()
 	insert, err := session.Insert(&dept)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -101,7 +101,7 @@ func (d DeptDao) CheckDeptNameUnique(dept dataobject.SysDept) int64 {
 	session := refs.SqlDB.NewSession()
 	count, err := session.Table("sys_dept").Cols("dept_id").Where("dept_name=?", dept.DeptName).And("parent_id = ?", dept.ParentId).Limit(1).Count()
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 1
 	}
 	return count
@@ -132,7 +132,7 @@ func (d DeptDao) Delete(id int) int64 {
 	i, err := session.Where("dept_id = ?", id).Delete(&dept)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -146,7 +146,7 @@ func (d DeptDao) Update(dept dataobject.SysDept) int64 {
 	update, err := session.Where("dept_id = ?", dept.DeptId).Update(&dept)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()

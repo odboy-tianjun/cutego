@@ -3,9 +3,9 @@ package util
 import (
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
 	"cutego/pkg/config"
 	"cutego/pkg/jwt"
+	"cutego/pkg/logging"
 	"cutego/refs"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -21,7 +21,7 @@ func GetUserInfo(c *gin.Context) *response.UserResponse {
 	// parseToken 解析token包含的信息
 	claims, err := jwt.ParseToken(s[1])
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 	}
 	info := claims.UserInfo
 	return &info
@@ -34,7 +34,7 @@ func CheckLockToken(c *gin.Context) bool {
 		info := GetUserInfo(c)
 		get, err := refs.RedisDB.GET(info.UserName)
 		if err != nil {
-			common.ErrorLog(err)
+			logging.ErrorLog(err)
 			return false
 		}
 		token := c.Request.Header.Get(config.AppEnvConfig.Jwt.Header)

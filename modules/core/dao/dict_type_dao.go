@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -22,7 +22,7 @@ func (d DictTypeDao) SelectAll() []*dataobject.SysDictType {
 	types := make([]*dataobject.SysDictType, 0)
 	err := d.sql(refs.SqlDB.NewSession()).Where("status = '0'").Find(&types)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return types
@@ -50,7 +50,7 @@ func (d DictTypeDao) SelectPage(query request.DictTypeQuery) (*[]dataobject.SysD
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&list)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &list, total
@@ -61,7 +61,7 @@ func (d DictTypeDao) SelectById(id int64) *dataobject.SysDictType {
 	dictType := dataobject.SysDictType{}
 	_, err := refs.SqlDB.NewSession().Where("dict_id = ?", id).Get(&dictType)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &dictType
@@ -75,7 +75,7 @@ func (d DictTypeDao) CheckDictTypeUnique(dictType dataobject.SysDictType) int64 
 	}
 	count, err := session.Where("dict_type = ?", dictType.DictType).Cols("dict_id").Count()
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	return count
@@ -87,7 +87,7 @@ func (d DictTypeDao) Update(dictType dataobject.SysDictType) bool {
 	session.Begin()
 	_, err := session.Where("dict_id = ?", dictType.DictId).Update(&dictType)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return false
 	}
@@ -101,7 +101,7 @@ func (d DictTypeDao) Insert(dictType dataobject.SysDictType) int64 {
 	session.Begin()
 	insert, err := session.Insert(&dictType)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -116,7 +116,7 @@ func (d DictTypeDao) Delete(ids []int64) bool {
 	_, err := session.In("dict_id", ids).Delete(dataobject.SysDictType{})
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return false
 	}
 	session.Commit()

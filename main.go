@@ -2,10 +2,10 @@ package main
 
 // init函数执行顺序自上而下, 最后执行main包里面的init函数
 import (
-	"cutego/pkg/common"
 	"cutego/pkg/config"
 	_ "cutego/pkg/cronjob"
 	_ "cutego/pkg/gin"
+	"cutego/pkg/logging"
 	"cutego/pkg/util"
 	"cutego/refs"
 	"fmt"
@@ -17,7 +17,7 @@ func main() {
 	gin.SetMode(util.IF(config.AppEnvConfig.Server.RunMode == "", "debug", config.AppEnvConfig.Server.RunMode).(string))
 	err := refs.CoolGin.Run(fmt.Sprintf(":%d", config.AppEnvConfig.Server.Port))
 	if err != nil {
-		common.FatalfLog("Start server: %+v", err)
+		logging.FatalfLog("Start server: %+v", err)
 	}
 }
 

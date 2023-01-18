@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -25,7 +25,7 @@ func (d PostDao) SelectAll() []*dataobject.SysPost {
 	posts := make([]*dataobject.SysPost, 0)
 	err := session.Find(&posts)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return posts
@@ -37,7 +37,7 @@ func (d PostDao) SelectPostListByUserId(userId int64) *[]int64 {
 	selectSql := d.sqlSelectJoin(refs.SqlDB.NewSession())
 	err := selectSql.Where("u.user_id = ?", userId).Cols("p.post_id").Find(&ids)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &ids
@@ -59,7 +59,7 @@ func (d PostDao) SelectPage(query request.PostQuery) (*[]dataobject.SysPost, int
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&posts)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &posts, total
@@ -94,7 +94,7 @@ func (d PostDao) Insert(post dataobject.SysPost) int64 {
 	insert, err := session.Insert(&post)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -105,7 +105,7 @@ func (d PostDao) Insert(post dataobject.SysPost) int64 {
 func (d PostDao) GetPostById(post dataobject.SysPost) *dataobject.SysPost {
 	_, err := refs.SqlDB.NewSession().Where("post_id = ?", post.PostId).Get(&post)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &post
@@ -119,7 +119,7 @@ func (d PostDao) Delete(posts []int64) int64 {
 	i, err := session.In("post_id", posts).Delete(&dataobject.SysPost{})
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	session.Commit()
@@ -133,7 +133,7 @@ func (d PostDao) Update(post dataobject.SysPost) bool {
 	_, err := session.Where("post_id = ?", post.PostId).Update(&post)
 	if err != nil {
 		session.Rollback()
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return false
 	}
 	session.Commit()
@@ -147,7 +147,7 @@ func (d PostDao) SelectPostByUserName(name string) *[]dataobject.SysPost {
 		Join("LEFT", []string{"sys_user_post", "up"}, "up.post_id = p.post_id").
 		Join("LEFT", []string{"sys_user", "u"}, "u.user_id = up.user_id").Where("u.user_name = ?", name).Find(&posts)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &posts

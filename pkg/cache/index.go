@@ -1,8 +1,9 @@
 package cache
 
 import (
-	"cutego/pkg/common"
 	"cutego/pkg/constant"
+	"cutego/pkg/logging"
+	"cutego/pkg/util"
 	"cutego/refs"
 )
 
@@ -18,7 +19,7 @@ func RemoveList(list []string) {
 func RemoveCache(key string) int {
 	del, err := refs.RedisDB.DEL(key)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 	}
 	return del
 }
@@ -29,7 +30,7 @@ func RemoveCache(key string) int {
 func GetCache(key string) string {
 	val, err := refs.RedisDB.GET(key)
 	if err != nil {
-		common.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
+		logging.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
 		return ""
 	}
 	return val
@@ -40,9 +41,9 @@ func GetCache(key string) string {
 // @Param value 值
 // @Return 新增的行数
 func SetCache(key string, value interface{}) int {
-	n, err := refs.RedisDB.SET(key, common.StructToJson(value))
+	n, err := refs.RedisDB.SET(key, util.StructToJson(value))
 	if err != nil {
-		common.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
+		logging.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
 		return 0
 	}
 	return int(n)
@@ -54,5 +55,5 @@ func SetCache(key string, value interface{}) int {
 // @Param sec 过期时间(单位: 秒)
 // @Return 新增的行数
 func SetCacheTTL(key string, value interface{}, sec int) {
-	refs.RedisDB.SETEX(key, sec, common.StructToJson(value))
+	refs.RedisDB.SETEX(key, sec, util.StructToJson(value))
 }

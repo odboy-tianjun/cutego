@@ -1,8 +1,8 @@
 package refs
 
 import (
-	"cutego/pkg/common"
 	"cutego/pkg/config"
+	"cutego/pkg/logging"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
@@ -11,6 +11,7 @@ import (
 
 // 配置数据库
 func init() {
+	logging.InfoLog("database init start...")
 	var err error
 	// 配置mysql数据库
 	ds := config.AppEnvConfig.DataSource
@@ -23,11 +24,11 @@ func init() {
 		ds.Charset)
 	SqlDB, err = xorm.NewEngine(ds.DbType, jdbc)
 	if err != nil {
-		common.FatalfLog("db error: %#v\n", err.Error())
+		logging.FatalfLog("db error: %#v\n", err.Error())
 	}
 	err = SqlDB.Ping()
 	if err != nil {
-		common.FatalfLog("db connect error: %#v\n", err.Error())
+		logging.FatalfLog("db connect error: %#v\n", err.Error())
 	}
 	SqlDB.SetMaxIdleConns(ds.MaxIdleSize)
 	SqlDB.SetMaxOpenConns(ds.MaxOpenSize)
@@ -36,11 +37,12 @@ func init() {
 		for _ = range timer.C {
 			err = x.Ping()
 			if err != nil {
-				common.FatalfLog("db connect error: %#v\n", err.Error())
+				logging.FatalfLog("db connect error: %#v\n", err.Error())
 			}
 		}
 	}(SqlDB)
 	SqlDB.ShowSQL(true)
 	// 开启缓存
 	SqlDB.SetDefaultCacher(xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000))
+	logging.InfoLog("database init end...")
 }

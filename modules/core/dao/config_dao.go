@@ -5,6 +5,7 @@ import (
 	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/constant"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -23,7 +24,7 @@ func (d ConfigDao) SelectByConfigKey(configKey string) *dataobject.SysConfig {
 	config := dataobject.SysConfig{}
 	_, err := d.sql(refs.SqlDB.NewSession()).Where("config_key = ?", configKey).Get(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &config
@@ -51,7 +52,7 @@ func (d ConfigDao) SelectPage(query request.ConfigQuery) (*[]dataobject.SysConfi
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return &configs, total
@@ -65,7 +66,7 @@ func (d ConfigDao) CheckConfigKeyUnique(config dataobject.SysConfig) int64 {
 	}
 	count, err := session.And("config_key = ?", config.ConfigKey).Cols("config_id").Count()
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return 0
 	}
 	return count
@@ -77,7 +78,7 @@ func (d ConfigDao) Insert(config dataobject.SysConfig) int64 {
 	session.Begin()
 	insert, err := session.Insert(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -91,7 +92,7 @@ func (d ConfigDao) SelectById(id int64) *dataobject.SysConfig {
 	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("config_id = ?", id).Get(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &config
@@ -103,7 +104,7 @@ func (d ConfigDao) Update(config dataobject.SysConfig) int64 {
 	session.Begin()
 	update, err := session.Where("config_id = ?", config.ConfigId).Update(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -116,7 +117,7 @@ func (d ConfigDao) CheckConfigByIds(list []int64) *[]dataobject.SysConfig {
 	configs := make([]dataobject.SysConfig, 0)
 	err := d.sql(refs.SqlDB.NewSession()).In("config_id", list).Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &configs
@@ -128,7 +129,7 @@ func (d ConfigDao) Delete(list []int64) bool {
 	session.Begin()
 	_, err := session.In("config_id", list).Delete(&dataobject.SysConfig{})
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return false
 	}
@@ -142,7 +143,7 @@ func (d ConfigDao) SelectAll() *[]dataobject.SysConfig {
 	session := refs.SqlDB.NewSession()
 	err := session.Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &configs
@@ -155,7 +156,7 @@ func init() {
 	configs := make([]*dataobject.SysConfig, 0)
 	err := configSession.Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return
 	}
 	for _, sysConfig := range configs {

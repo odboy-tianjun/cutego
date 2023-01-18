@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/refs"
 )
 
@@ -16,7 +16,7 @@ func (d UserRoleDao) BatchInsert(roles []dataobject.SysUserRole) {
 	session.Begin()
 	_, err := session.Table(dataobject.SysUserRole{}.TableName()).Insert(&roles)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return
 	}
@@ -32,7 +32,7 @@ func (d UserRoleDao) Delete(id int64) {
 	session.Begin()
 	_, err := session.Delete(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return
 	}
@@ -45,7 +45,7 @@ func (d UserRoleDao) DeleteAuthUser(role dataobject.SysUserRole) int64 {
 	session.Begin()
 	i, err := session.Delete(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -68,7 +68,7 @@ func (d UserRoleDao) InsertAuthUsers(body request.UserRoleBody) int64 {
 	session.Begin()
 	insert, err := session.Insert(&roles)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}

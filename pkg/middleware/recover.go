@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"runtime/debug"
@@ -10,7 +10,7 @@ import (
 func Recover(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
-			common.ErrorLog("panic: %v\n", r)
+			logging.ErrorLog("panic: %v\n", r)
 			debug.PrintStack()
 			c.JSON(http.StatusOK, gin.H{
 				"code": http.StatusInternalServerError,

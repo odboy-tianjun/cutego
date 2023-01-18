@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -61,7 +61,7 @@ func (d RoleDao) SelectAll() []*dataobject.SysRole {
 	roles := make([]*dataobject.SysRole, 0)
 	err := sql.Find(&roles)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return roles
@@ -73,7 +73,7 @@ func (d RoleDao) SelectRoleListByUserId(userId int64) *[]int64 {
 	var roleIds []int64
 	err := sqlSelectRoleAndUser.Cols("r.role_id").Where("u.user_id = ?", userId).Find(&roleIds)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &roleIds
@@ -84,7 +84,7 @@ func (d RoleDao) SelectRolePermissionByUserId(id int64) *[]string {
 	var roleKeys []string
 	err := d.sqlSelectJoin().Cols("r.role_key").Where("r.del_flag = '0'").And("ur.user_id = ?", id).Find(&roleKeys)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &roleKeys
@@ -95,7 +95,7 @@ func (d RoleDao) GetRoleListByUserId(id int64) *[]dataobject.SysRole {
 	roles := make([]dataobject.SysRole, 0)
 	err := d.sqlSelectJoin().Where("r.del_flag = '0'").And("ur.user_id = ?", id).Find(&roles)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &roles
@@ -106,7 +106,7 @@ func (d RoleDao) SelectRoleByRoleId(id int64) *dataobject.SysRole {
 	role := dataobject.SysRole{}
 	_, err := d.sqlSelectJoin().Where("r.role_id = ?", id).Get(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &role
@@ -120,7 +120,7 @@ func (d RoleDao) CheckRoleNameUnique(role dataobject.SysRole) int64 {
 	}
 	count, err := session.Count(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 	}
 	return count
 }
@@ -133,7 +133,7 @@ func (d RoleDao) CheckRoleKeyUnique(role dataobject.SysRole) int64 {
 	}
 	count, err := session.Count(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 	}
 	return count
 }
@@ -144,7 +144,7 @@ func (d RoleDao) Insert(role dataobject.SysRole) dataobject.SysRole {
 	session.Begin()
 	_, err := session.Insert(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -157,7 +157,7 @@ func (d RoleDao) Update(role dataobject.SysRole) int64 {
 	session.Begin()
 	update, err := session.Where("role_id = ?", role.RoleId).Update(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -171,7 +171,7 @@ func (d RoleDao) Delete(role dataobject.SysRole) int64 {
 	session.Begin()
 	i, err := session.Delete(&role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -185,7 +185,7 @@ func (d RoleDao) UpdateRoleStatus(role *dataobject.SysRole) int64 {
 	session.Begin()
 	update, err := session.Where("role_id = ?", role.RoleId).Cols("status", "update_by", "update_time").Update(role)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -199,7 +199,7 @@ func (d RoleDao) SelectRolesByUserName(name string) *[]dataobject.SysRole {
 	session := d.sqlSelectJoin()
 	err := session.Where("r.del_flag = '0'").And("u.user_name = ?", name).Find(&roles)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &roles

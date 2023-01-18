@@ -1,7 +1,7 @@
 package page
 
 import (
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"github.com/go-xorm/xorm"
 )
 
@@ -34,7 +34,7 @@ func GetTotal(engine *xorm.Session, args ...interface{}) (int64, error) {
 	}
 	count, err := engine.Count()
 	if err != nil {
-		common.ErrorLog(err.Error())
+		logging.ErrorLog(err.Error())
 		return 0, err
 	}
 	return count, nil

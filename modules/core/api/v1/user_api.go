@@ -7,6 +7,7 @@ import (
 	"cutego/modules/core/service"
 	"cutego/pkg/common"
 	"cutego/pkg/excels"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/pkg/resp"
 	"cutego/pkg/util"
@@ -92,7 +93,7 @@ func (a UserApi) AuthRole(c *gin.Context) {
 	userId := c.Param("userId")
 	parseInt, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		c.JSON(http.StatusInternalServerError, resp.ErrorResp(err))
 	}
 	user := a.userService.GetUserById(parseInt)
@@ -173,7 +174,7 @@ func (a UserApi) Remove(c *gin.Context) {
 	param := c.Param("userId")
 	userId, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		c.JSON(http.StatusInternalServerError, resp.ErrorResp("参数错误"))
 		return
 	}
@@ -293,13 +294,13 @@ func (a UserApi) Avatar(c *gin.Context) {
 	fileAppend, err := gotool.FileUtils.OpenFileAppend(filePath)
 	defer fileAppend.Close()
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		resp.Error(c)
 		return
 	}
 	_, err = io.Copy(fileAppend, file)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		resp.Error(c)
 		return
 	}

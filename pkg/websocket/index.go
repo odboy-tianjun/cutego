@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -12,16 +12,16 @@ import (
 // var ws = new WebSocket("ws://127.0.0.1:21366/websocket?user=admin&code=notice");
 // // 连接打开时触发
 // ws.onopen = function(evt) {
-// console.log("Connection open ...");
+// console.logging("Connection open ...");
 // ws.send("Hello WebSockets!");
 // };
 // // 接收到消息时触发
 // ws.onmessage = function(evt) {
-// console.log("Received Message: " + evt.data);
+// console.logging("Received Message: " + evt.data);
 // };
 // // 连接关闭时触发
 // ws.onclose = function(evt) {
-// console.log("Connection closed.");
+// console.logging("Connection closed.");
 // };
 // </script>
 
@@ -69,8 +69,8 @@ func HandleWebSocketMessage(c *gin.Context) {
 
 // 回调函数的具体实现
 func HandleAdminNotice(messageType int, content []byte) error {
-	common.InfoLog("messageType=%d\n", messageType)
-	common.InfoLog("content=%s\n", string(content))
+	logging.InfoLog("messageType=%d\n", messageType)
+	logging.InfoLog("content=%s\n", string(content))
 	return nil
 }
 

@@ -2,7 +2,7 @@ package util
 
 import (
 	"bytes"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"encoding/gob"
 )
 
@@ -21,7 +21,7 @@ func DeepCopy(src, dst interface{}) interface{} {
 	}
 	err := gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
 	if err != nil {
-		common.ErrorLogf("src(%v)---> dst(%v), error", src, dst)
+		logging.ErrorLogf("src(%v)---> dst(%v), error", src, dst)
 	}
 	return dst
 }

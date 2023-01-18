@@ -1,4 +1,4 @@
-package common
+package logging
 
 import "github.com/druidcaesa/gotool"
 

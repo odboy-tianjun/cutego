@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/logging"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -30,7 +30,7 @@ func (d CronJobDao) SelectPage(query request.CronJobQuery) ([]dataobject.SysCron
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return configs, total
@@ -42,7 +42,7 @@ func (d CronJobDao) Insert(config dataobject.SysCronJob) int64 {
 	session.Begin()
 	insert, err := session.Insert(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -56,7 +56,7 @@ func (d CronJobDao) SelectById(id int64) *dataobject.SysCronJob {
 	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("job_id = ?", id).Get(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &config
@@ -68,7 +68,7 @@ func (d CronJobDao) Update(config dataobject.SysCronJob) int64 {
 	session.Begin()
 	update, err := session.Where("job_id = ?", config.JobId).Update(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return 0
 	}
@@ -82,7 +82,7 @@ func (d CronJobDao) Delete(list []int64) bool {
 	session.Begin()
 	_, err := session.In("job_id", list).Delete(&dataobject.SysCronJob{})
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		session.Rollback()
 		return false
 	}
@@ -96,7 +96,7 @@ func (d CronJobDao) SelectByFuncAlias(funcAlias string) *dataobject.SysCronJob {
 	session := d.sql(refs.SqlDB.NewSession())
 	_, err := session.Where("func_alias = ?", funcAlias).Get(&config)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil
 	}
 	return &config
@@ -108,7 +108,7 @@ func (d CronJobDao) SelectAll() ([]dataobject.SysCronJob, int) {
 	session := d.sql(refs.SqlDB.NewSession())
 	err := session.Where("status = ?", 1).Find(&configs)
 	if err != nil {
-		common.ErrorLog(err)
+		logging.ErrorLog(err)
 		return nil, 0
 	}
 	return configs, len(configs)
