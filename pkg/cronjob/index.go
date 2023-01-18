@@ -1,8 +1,8 @@
 package cronjob
 
 import (
-	"cutego/core/job"
-	"cutego/core/service"
+	"cutego/modules/core/job"
+	"cutego/modules/core/service"
 	"cutego/pkg/common"
 	"github.com/robfig/cron"
 )

@@ -1,7 +1,7 @@
 package tree_menu
 
 import (
-	"cutego/core/entity"
+	"cutego/modules/core/entity"
 	"github.com/druidcaesa/gotool"
 	"sort"
 )

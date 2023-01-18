@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"cutego/core/dao"
+	"cutego/modules/core/dao"
 	"cutego/pkg/common"
 	"cutego/pkg/constant"
 )

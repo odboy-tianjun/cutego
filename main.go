@@ -2,9 +2,9 @@ package main
 
 // init函数执行顺序自上而下, 最后执行main包里面的init函数
 import (
-	_ "cutego/core/dao"
-	_ "cutego/core/job"
-	"cutego/core/router"
+	"cutego/modules"
+	_ "cutego/modules/core/dao"
+	_ "cutego/modules/core/job"
 	"cutego/pkg/common"
 	"cutego/pkg/config"
 	_ "cutego/pkg/cronjob"
@@ -16,9 +16,8 @@ import (
 
 func main() {
 	//go testChangeJob()
-
 	gin.SetMode(util.IF(config.AppEnvConfig.Server.RunMode == "", "debug", config.AppEnvConfig.Server.RunMode).(string))
-	r := router.Init()
+	r := modules.Init()
 	r.Use(logger.LoggerToFile())
 	err := r.Run(fmt.Sprintf(":%d", config.AppEnvConfig.Server.Port))
 	if err != nil {

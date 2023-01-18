@@ -1,7 +1,7 @@
 package tree_dept
 
 import (
-	"cutego/core/entity"
+	"cutego/modules/core/entity"
 	"sort"
 )
 

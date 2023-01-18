@@ -1,8 +1,8 @@
 package jwt
 
 import (
-	"cutego/core/api/v1/response"
-	"cutego/core/dao"
+	"cutego/modules/core/api/v1/response"
+	"cutego/modules/core/dao"
 	"cutego/pkg/cache"
 	"cutego/pkg/config"
 	"errors"

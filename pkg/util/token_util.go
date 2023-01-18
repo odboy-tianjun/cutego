@@ -1,9 +1,9 @@
 package util
 
 import (
-	"cutego/core/api/v1/response"
-	"cutego/core/dao"
-	"cutego/core/entity"
+	"cutego/modules/core/api/v1/response"
+	"cutego/modules/core/dao"
+	"cutego/modules/core/entity"
 	"cutego/pkg/common"
 	"cutego/pkg/config"
 	"cutego/pkg/jwt"
