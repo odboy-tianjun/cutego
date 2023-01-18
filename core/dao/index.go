@@ -28,8 +28,7 @@ func initDatabase() {
 		ds.Host,
 		ds.Port,
 		ds.Database,
-		ds.Charset,
-	)
+		ds.Charset)
 	SqlDB, _ = xorm.NewEngine(ds.DbType, jdbc)
 	if err != nil {
 		common.FatalfLog("db error: %#v\n", err.Error())
@@ -50,6 +49,8 @@ func initDatabase() {
 		}
 	}(SqlDB)
 	SqlDB.ShowSQL(true)
+	// 开启缓存
+	SqlDB.SetDefaultCacher(xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000))
 }
 func initRedis() {
 	// 配置redis数据库
