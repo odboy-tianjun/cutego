@@ -11,11 +11,32 @@
  Target Server Version : 80028
  File Encoding         : 65001
 
- Date: 17/01/2023 16:59:40
+ Date: 18/01/2023 17:23:54
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for student
+-- ----------------------------
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `create_by` varchar(255) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` varchar(255) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `sex` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of student
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_config
@@ -62,12 +83,13 @@ CREATE TABLE `sys_cron_job` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`job_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COMMENT='定时任务表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COMMENT='定时任务表';
 
 -- ----------------------------
 -- Records of sys_cron_job
 -- ----------------------------
 BEGIN;
+INSERT INTO `sys_cron_job` (`job_id`, `job_name`, `job_cron`, `func_alias`, `func_param`, `status`, `level`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (4, '无参测试', '*/1 * * * *', 'test1', NULL, '0', 1, 'admin', '2023-01-18 14:31:08', 'admin', '2023-01-18 14:31:14', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -210,15 +232,12 @@ CREATE TABLE `sys_login_info` (
   `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
   `login_time` datetime DEFAULT NULL COMMENT '登录时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COMMENT='用户登陆记录';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COMMENT='用户登陆记录';
 
 -- ----------------------------
 -- Records of sys_login_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_login_info` (`id`, `user_name`, `ip_addr`, `login_location`, `browser`, `os`, `status`, `msg`, `login_time`) VALUES (2, 'admin', '127.0.0.1', '本地', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36', 'macOS', '1', '', '2022-02-25 10:13:57');
-INSERT INTO `sys_login_info` (`id`, `user_name`, `ip_addr`, `login_location`, `browser`, `os`, `status`, `msg`, `login_time`) VALUES (3, 'admin', '127.0.0.1', '本地', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36', 'macOS', '1', '', '2022-02-25 15:57:55');
-INSERT INTO `sys_login_info` (`id`, `user_name`, `ip_addr`, `login_location`, `browser`, `os`, `status`, `msg`, `login_time`) VALUES (4, 'admin', '127.0.0.1', '本机', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36', 'macOS', '1', '', '2022-02-28 14:28:30');
 COMMIT;
 
 -- ----------------------------
