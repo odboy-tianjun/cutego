@@ -1,4 +1,4 @@
-package entity
+package dataobject
 
 import (
 	"strings"

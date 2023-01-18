@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/page"
 	"cutego/pkg/resp"
@@ -34,7 +34,7 @@ func (a NoticeApi) List(c *gin.Context) {
 
 // Add 添加公告
 func (a NoticeApi) Add(c *gin.Context) {
-	notice := entity.SysNotice{}
+	notice := dataobject.SysNotice{}
 	if c.Bind(&notice) != nil {
 		resp.ParamError(c)
 		return
@@ -71,7 +71,7 @@ func (a NoticeApi) Get(c *gin.Context) {
 
 // Edit 修改
 func (a NoticeApi) Edit(c *gin.Context) {
-	notice := entity.SysNotice{}
+	notice := dataobject.SysNotice{}
 	if c.Bind(&notice) != nil {
 		resp.ParamError(c)
 		return

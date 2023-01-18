@@ -3,7 +3,7 @@ package v1
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/common"
 	"cutego/pkg/cronjob"
@@ -42,7 +42,7 @@ func (a CronJobApi) GetById(c *gin.Context) {
 
 // Edit 修改定时任务
 func (a CronJobApi) Edit(c *gin.Context) {
-	record := entity.SysCronJob{}
+	record := dataobject.SysCronJob{}
 	if c.Bind(&record) != nil {
 		resp.ParamError(c)
 		return
@@ -56,7 +56,7 @@ func (a CronJobApi) Edit(c *gin.Context) {
 
 // Add 新增定时任务
 func (a CronJobApi) Add(c *gin.Context) {
-	dto := entity.SysCronJob{}
+	dto := dataobject.SysCronJob{}
 	if c.Bind(&dto) != nil {
 		resp.ParamError(c)
 		return
@@ -88,7 +88,7 @@ func (a CronJobApi) Remove(c *gin.Context) {
 
 // ChangeStatus 改变任务状态
 func (a CronJobApi) ChangeStatus(c *gin.Context) {
-	record := entity.SysCronJob{}
+	record := dataobject.SysCronJob{}
 	if c.Bind(&record) != nil {
 		resp.ParamError(c)
 		return

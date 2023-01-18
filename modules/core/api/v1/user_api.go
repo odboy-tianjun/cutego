@@ -3,7 +3,7 @@ package v1
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/common"
 	"cutego/pkg/excels"
@@ -53,11 +53,11 @@ func (a UserApi) GetInfo(c *gin.Context) {
 		parseInt, err := strconv.ParseInt(param, 10, 64)
 		if err == nil {
 			// 判断当前登录用户是否是admin
-			m := new(entity.SysUser)
+			m := new(dataobject.SysUser)
 			if m.IsAdmin(parseInt) {
 				r.Roles = roleAll
 			} else {
-				roles := make([]*entity.SysRole, 0)
+				roles := make([]*dataobject.SysRole, 0)
 				for _, role := range roleAll {
 					if role.RoleId != 1 {
 						roles = append(roles, role)
@@ -74,7 +74,7 @@ func (a UserApi) GetInfo(c *gin.Context) {
 		}
 	} else {
 		//id为空不取管理员角色
-		roles := make([]*entity.SysRole, 0)
+		roles := make([]*dataobject.SysRole, 0)
 		for _, role := range roleAll {
 			if role.RoleId != 1 {
 				roles = append(roles, role)
@@ -98,11 +98,11 @@ func (a UserApi) AuthRole(c *gin.Context) {
 	user := a.userService.GetUserById(parseInt)
 	// 查询角色
 	roles := a.roleService.GetRoleListByUserId(parseInt)
-	flag := entity.SysUser{}.IsAdmin(parseInt)
+	flag := dataobject.SysUser{}.IsAdmin(parseInt)
 	if flag {
 		m["roles"] = roles
 	} else {
-		roleList := make([]entity.SysRole, 0)
+		roleList := make([]dataobject.SysRole, 0)
 		for _, role := range *roles {
 			if role.RoleId != 1 {
 				roleList = append(roleList, role)

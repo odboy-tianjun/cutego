@@ -1,7 +1,8 @@
 package dao
 
 import (
-	"cutego/modules/core/entity"
+	"cutego/modules"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 )
 
@@ -9,8 +10,8 @@ type RoleMenuDao struct {
 }
 
 // Insert 添加角色菜单关系
-func (d RoleMenuDao) Insert(list []entity.SysRoleMenu) int64 {
-	session := SqlDB.NewSession()
+func (d RoleMenuDao) Insert(list []dataobject.SysRoleMenu) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&list)
 	if err != nil {
@@ -22,11 +23,11 @@ func (d RoleMenuDao) Insert(list []entity.SysRoleMenu) int64 {
 }
 
 // Delete 删除角色和菜单关系
-func (d RoleMenuDao) Delete(role entity.SysRole) {
-	menu := entity.SysRoleMenu{
+func (d RoleMenuDao) Delete(role dataobject.SysRole) {
+	menu := dataobject.SysRoleMenu{
 		RoleId: role.RoleId,
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Delete(&menu)
 	if err != nil {

@@ -1,9 +1,10 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"github.com/druidcaesa/gotool"
@@ -16,7 +17,7 @@ type UserDao struct {
 
 // 查询公共sql
 func (d UserDao) sqlSelectJoin() *xorm.Session {
-	return SqlDB.NewSession().Table([]string{"sys_user", "u"}).
+	return modules.SqlDB.NewSession().Table([]string{"sys_user", "u"}).
 		Join("LEFT", []string{"sys_dept", "d"}, "u.dept_id = d.dept_id").
 		Join("LEFT", []string{"sys_user_role", "ur"}, "u.user_id = ur.user_id").
 		Join("LEFT", []string{"sys_role", "r"}, "r.role_id = ur.role_id")
@@ -67,8 +68,8 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 }
 
 // GetUserByUserName 根据用户名查询用户数据
-func (d UserDao) GetUserByUserName(user entity.SysUser) *entity.SysUser {
-	i, err := SqlDB.Get(&user)
+func (d UserDao) GetUserByUserName(user dataobject.SysUser) *dataobject.SysUser {
+	i, err := modules.SqlDB.Get(&user)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -80,9 +81,9 @@ func (d UserDao) GetUserByUserName(user entity.SysUser) *entity.SysUser {
 }
 
 // CheckEmailUnique 校验邮箱是否存在
-func (d UserDao) CheckEmailUnique(user request.UserBody) *entity.SysUser {
-	sysUser := entity.SysUser{}
-	session := SqlDB.NewSession().Table("sys_user")
+func (d UserDao) CheckEmailUnique(user request.UserBody) *dataobject.SysUser {
+	sysUser := dataobject.SysUser{}
+	session := modules.SqlDB.NewSession().Table("sys_user")
 	session.Cols("user_id", "email")
 	session.Where("email = ?", user.Email)
 	if user.UserId > 0 {
@@ -96,9 +97,9 @@ func (d UserDao) CheckEmailUnique(user request.UserBody) *entity.SysUser {
 }
 
 // CheckPhoneNumUnique 校验手机号是否存在
-func (d UserDao) CheckPhoneNumUnique(body request.UserBody) *entity.SysUser {
-	sysUser := entity.SysUser{}
-	session := SqlDB.NewSession().Table("sys_user")
+func (d UserDao) CheckPhoneNumUnique(body request.UserBody) *dataobject.SysUser {
+	sysUser := dataobject.SysUser{}
+	session := modules.SqlDB.NewSession().Table("sys_user")
 	session.Cols("user_id", "phone_num")
 	session.Where("phone_num = ?", body.PhoneNumber)
 	if body.UserId > 0 {
@@ -113,7 +114,7 @@ func (d UserDao) CheckPhoneNumUnique(body request.UserBody) *entity.SysUser {
 
 // Insert 添加用户
 func (d UserDao) Insert(body request.UserBody) *request.UserBody {
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Table("sys_user").Insert(&body)
 	if err != nil {
@@ -126,7 +127,7 @@ func (d UserDao) Insert(body request.UserBody) *request.UserBody {
 
 // Update 修改用户数据
 func (d UserDao) Update(body request.UserBody) int64 {
-	session := SqlDB.NewSession().Table("sys_user")
+	session := modules.SqlDB.NewSession().Table("sys_user")
 	session.Begin()
 	_, err := session.Where("user_id = ?", body.UserId).Update(&body)
 	if err != nil {
@@ -140,10 +141,10 @@ func (d UserDao) Update(body request.UserBody) int64 {
 
 // Delete 根据id删除用户数据
 func (d UserDao) Delete(id int64) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId: id,
 	}
-	session := SqlDB.NewSession().Table("sys_user")
+	session := modules.SqlDB.NewSession().Table("sys_user")
 	session.Begin()
 	i, err := session.Delete(&user)
 	if err != nil {
@@ -156,11 +157,11 @@ func (d UserDao) Delete(id int64) int64 {
 
 // ResetPwd 修改用户密码数据库操作
 func (d UserDao) ResetPwd(body request.UserBody) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId:   body.UserId,
 		Password: body.Password,
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Where("user_id = ?", user.UserId).Cols("password").Update(&user)
 	if err != nil {
@@ -175,7 +176,7 @@ func (d UserDao) ResetPwd(body request.UserBody) int64 {
 // GetAllocatedList 查询未分配用户角色列表
 func (d UserDao) GetAllocatedList(query request.UserQuery) ([]*response.UserResponse, int64) {
 	resp := make([]*response.UserResponse, 0)
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Table([]string{"sys_user", "u"}).Distinct("u.user_id", "u.dept_id", "u.user_name", "u.nick_name", "u.email", "u.phone_number", "u.status", "u.create_time").
 		Join("LEFT", []string{"sys_dept", "d"}, "u.dept_id = d.dept_id").
 		Join("LEFT", []string{"sys_user_role", "ur"}, "u.user_id = ur.user_id").
@@ -198,7 +199,7 @@ func (d UserDao) GetAllocatedList(query request.UserQuery) ([]*response.UserResp
 // GetUnallocatedList 查询未分配用户角色列表
 func (d UserDao) GetUnallocatedList(query request.UserQuery) ([]*response.UserResponse, int64) {
 	resp := make([]*response.UserResponse, 0)
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Table([]string{"sys_user", "u"}).Distinct("u.user_id", "u.dept_id", "u.user_name", "u.nick_name", "u.email", "u.phone_number", "u.status", "u.create_time").
 		Join("LEFT", []string{"sys_dept", "d"}, "u.dept_id = d.dept_id").
 		Join("LEFT", []string{"sys_user_role", "ur"}, "u.user_id = ur.user_id").
@@ -221,10 +222,10 @@ func (d UserDao) GetUnallocatedList(query request.UserQuery) ([]*response.UserRe
 
 // UpdatePwd 修改密码
 func (d UserDao) UpdatePwd(id int64, hash string) int64 {
-	user := entity.SysUser{}
+	user := dataobject.SysUser{}
 	user.UserId = id
 	user.Password = hash
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Cols("password").Where("user_id = ?", id).Update(&user)
 	if err != nil {
@@ -238,13 +239,13 @@ func (d UserDao) UpdatePwd(id int64, hash string) int64 {
 
 // UpdateAvatar 修改头像
 func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		Avatar:     info.Avatar,
 		UserId:     info.UserId,
 		UpdateBy:   info.UserName,
 		UpdateTime: time.Now(),
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Cols("avatar", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {
@@ -257,13 +258,13 @@ func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
 }
 
 func (d UserDao) UpdateStatus(info request.UserBody) int64 {
-	user := entity.SysUser{
+	user := dataobject.SysUser{
 		UserId:     info.UserId,
 		Status:     info.Status,
 		UpdateBy:   info.UserName,
 		UpdateTime: time.Now(),
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Cols("status", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {

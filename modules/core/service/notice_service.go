@@ -3,7 +3,7 @@ package service
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 type NoticeService struct {
@@ -11,12 +11,12 @@ type NoticeService struct {
 }
 
 // FindPage 查询集合数据
-func (s NoticeService) FindPage(query request.NoticeQuery) (*[]entity.SysNotice, int64) {
+func (s NoticeService) FindPage(query request.NoticeQuery) (*[]dataobject.SysNotice, int64) {
 	return s.noticeDao.SelectPage(query)
 }
 
 // Save 添加公告
-func (s NoticeService) Save(notice entity.SysNotice) bool {
+func (s NoticeService) Save(notice dataobject.SysNotice) bool {
 	return s.noticeDao.Insert(notice) > 0
 }
 
@@ -26,11 +26,11 @@ func (s NoticeService) Remove(list []int64) bool {
 }
 
 // GetById 查询
-func (s NoticeService) GetById(id int64) *entity.SysNotice {
+func (s NoticeService) GetById(id int64) *dataobject.SysNotice {
 	return s.noticeDao.SelectById(id)
 }
 
 // Edit 修改
-func (s NoticeService) Edit(notice entity.SysNotice) bool {
+func (s NoticeService) Edit(notice dataobject.SysNotice) bool {
 	return s.noticeDao.Update(notice) > 0
 }

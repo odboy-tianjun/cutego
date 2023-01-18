@@ -3,7 +3,7 @@ package service
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/config"
 	"github.com/gin-gonic/gin"
 	"github.com/yinheli/qqwry"
@@ -16,12 +16,12 @@ type LoginInfoService struct {
 }
 
 // FindPage 分页查询数据
-func (s LoginInfoService) FindPage(query request.LoginInfoQuery) (*[]entity.SysLoginInfo, int64) {
+func (s LoginInfoService) FindPage(query request.LoginInfoQuery) (*[]dataobject.SysLoginInfo, int64) {
 	return s.loginInfoDao.SelectPage(query)
 }
 
 // Save 添加登录记录业务逻辑
-func (s LoginInfoService) Save(body entity.SysLoginInfo) bool {
+func (s LoginInfoService) Save(body dataobject.SysLoginInfo) bool {
 	// 添加登录记录数据库操作
 	user := s.loginInfoDao.Insert(body)
 	if user != nil {

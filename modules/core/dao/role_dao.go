@@ -1,8 +1,9 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"github.com/druidcaesa/gotool"
@@ -14,7 +15,7 @@ type RoleDao struct {
 
 // 角色公用sql
 func (d RoleDao) sqlSelectJoin() *xorm.Session {
-	return SqlDB.Table([]string{entity.SysRole{}.TableName(), "r"}).
+	return modules.SqlDB.Table([]string{dataobject.SysRole{}.TableName(), "r"}).
 		Join("LEFT", []string{"sys_user_role", "ur"}, "ur.role_id = r.role_id").
 		Join("LEFT", []string{"sys_user", "u"}, "u.user_id = ur.user_id").
 		Join("LEFT", []string{"sys_dept", "d"}, "u.dept_id = d.dept_id")
@@ -22,14 +23,14 @@ func (d RoleDao) sqlSelectJoin() *xorm.Session {
 
 // 用户角色关系查询sql
 func (d RoleDao) sqlSelectRoleAndUser() *xorm.Session {
-	return SqlDB.Table([]string{entity.SysRole{}.TableName(), "r"}).
+	return modules.SqlDB.Table([]string{dataobject.SysRole{}.TableName(), "r"}).
 		Join("LEFT", []string{"sys_user_role", "ur"}, "ur.role_id = r.role_id").
 		Join("LEFT", []string{"sys_user", "u"}, "u.user_id = ur.user_id")
 }
 
 // SelectPage 根据条件查询角色数据
-func (d RoleDao) SelectPage(q *request.RoleQuery) ([]*entity.SysRole, int64) {
-	roles := make([]*entity.SysRole, 0)
+func (d RoleDao) SelectPage(q *request.RoleQuery) ([]*dataobject.SysRole, int64) {
+	roles := make([]*dataobject.SysRole, 0)
 	session := d.sqlSelectJoin()
 	if !gotool.StrUtils.HasEmpty(q.RoleName) {
 		session.And("r.role_name like concat('%', ?, '%')", q.RoleName)
@@ -55,9 +56,9 @@ func (d RoleDao) SelectPage(q *request.RoleQuery) ([]*entity.SysRole, int64) {
 }
 
 // SelectAll 查询所有角色
-func (d RoleDao) SelectAll() []*entity.SysRole {
+func (d RoleDao) SelectAll() []*dataobject.SysRole {
 	sql := d.sqlSelectJoin()
-	roles := make([]*entity.SysRole, 0)
+	roles := make([]*dataobject.SysRole, 0)
 	err := sql.Find(&roles)
 	if err != nil {
 		common.ErrorLog(err)
@@ -90,8 +91,8 @@ func (d RoleDao) SelectRolePermissionByUserId(id int64) *[]string {
 }
 
 // GetRoleListByUserId 根据用户ID查询角色
-func (d RoleDao) GetRoleListByUserId(id int64) *[]entity.SysRole {
-	roles := make([]entity.SysRole, 0)
+func (d RoleDao) GetRoleListByUserId(id int64) *[]dataobject.SysRole {
+	roles := make([]dataobject.SysRole, 0)
 	err := d.sqlSelectJoin().Where("r.del_flag = '0'").And("ur.user_id = ?", id).Find(&roles)
 	if err != nil {
 		common.ErrorLog(err)
@@ -101,8 +102,8 @@ func (d RoleDao) GetRoleListByUserId(id int64) *[]entity.SysRole {
 }
 
 // SelectRoleByRoleId 根据角色id查询角色数据
-func (d RoleDao) SelectRoleByRoleId(id int64) *entity.SysRole {
-	role := entity.SysRole{}
+func (d RoleDao) SelectRoleByRoleId(id int64) *dataobject.SysRole {
+	role := dataobject.SysRole{}
 	_, err := d.sqlSelectJoin().Where("r.role_id = ?", id).Get(&role)
 	if err != nil {
 		common.ErrorLog(err)
@@ -112,8 +113,8 @@ func (d RoleDao) SelectRoleByRoleId(id int64) *entity.SysRole {
 }
 
 // CheckRoleNameUnique 校验角色名称是否唯一
-func (d RoleDao) CheckRoleNameUnique(role entity.SysRole) int64 {
-	session := SqlDB.Table(role.TableName()).Where("role_name = ?", role.RoleName)
+func (d RoleDao) CheckRoleNameUnique(role dataobject.SysRole) int64 {
+	session := modules.SqlDB.Table(role.TableName()).Where("role_name = ?", role.RoleName)
 	if role.RoleId > 0 {
 		session.And("role_id != ?", role.RoleId)
 	}
@@ -125,8 +126,8 @@ func (d RoleDao) CheckRoleNameUnique(role entity.SysRole) int64 {
 }
 
 // CheckRoleKeyUnique 校验角色权限是否唯一
-func (d RoleDao) CheckRoleKeyUnique(role entity.SysRole) int64 {
-	session := SqlDB.Table(role.TableName()).Where("role_key = ?", role.RoleKey)
+func (d RoleDao) CheckRoleKeyUnique(role dataobject.SysRole) int64 {
+	session := modules.SqlDB.Table(role.TableName()).Where("role_key = ?", role.RoleKey)
 	if role.RoleId > 0 {
 		session.And("role_id != ?", role.RoleId)
 	}
@@ -138,8 +139,8 @@ func (d RoleDao) CheckRoleKeyUnique(role entity.SysRole) int64 {
 }
 
 // Add 添加角色进入数据库操作
-func (d RoleDao) Insert(role entity.SysRole) entity.SysRole {
-	session := SqlDB.NewSession()
+func (d RoleDao) Insert(role dataobject.SysRole) dataobject.SysRole {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Insert(&role)
 	if err != nil {
@@ -151,8 +152,8 @@ func (d RoleDao) Insert(role entity.SysRole) entity.SysRole {
 }
 
 // Update 修改数据
-func (d RoleDao) Update(role entity.SysRole) int64 {
-	session := SqlDB.NewSession()
+func (d RoleDao) Update(role dataobject.SysRole) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Where("role_id = ?", role.RoleId).Update(&role)
 	if err != nil {
@@ -165,8 +166,8 @@ func (d RoleDao) Update(role entity.SysRole) int64 {
 }
 
 // Delete 删除角色
-func (d RoleDao) Delete(role entity.SysRole) int64 {
-	session := SqlDB.NewSession()
+func (d RoleDao) Delete(role dataobject.SysRole) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	i, err := session.Delete(&role)
 	if err != nil {
@@ -179,8 +180,8 @@ func (d RoleDao) Delete(role entity.SysRole) int64 {
 }
 
 // UpdateRoleStatus 修改角色状态
-func (d RoleDao) UpdateRoleStatus(role *entity.SysRole) int64 {
-	session := SqlDB.NewSession()
+func (d RoleDao) UpdateRoleStatus(role *dataobject.SysRole) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Where("role_id = ?", role.RoleId).Cols("status", "update_by", "update_time").Update(role)
 	if err != nil {
@@ -193,8 +194,8 @@ func (d RoleDao) UpdateRoleStatus(role *entity.SysRole) int64 {
 }
 
 // SelectRolesByUserName 查询角色组
-func (d RoleDao) SelectRolesByUserName(name string) *[]entity.SysRole {
-	roles := make([]entity.SysRole, 0)
+func (d RoleDao) SelectRolesByUserName(name string) *[]dataobject.SysRole {
+	roles := make([]dataobject.SysRole, 0)
 	session := d.sqlSelectJoin()
 	err := session.Where("r.del_flag = '0'").And("u.user_name = ?", name).Find(&roles)
 	if err != nil {

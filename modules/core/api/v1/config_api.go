@@ -3,7 +3,7 @@ package v1
 import (
 	"cutego/modules/core/api/v1/request"
 	cache2 "cutego/modules/core/cache"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	service2 "cutego/modules/core/service"
 	"cutego/pkg/cache"
 	"cutego/pkg/excels"
@@ -55,7 +55,7 @@ func (a ConfigApi) List(c *gin.Context) {
 
 // Add 添加数据
 func (a ConfigApi) Add(c *gin.Context) {
-	config := entity.SysConfig{}
+	config := dataobject.SysConfig{}
 	if c.Bind(&config) != nil {
 		resp.ParamError(c)
 		return
@@ -83,7 +83,7 @@ func (a ConfigApi) Get(c *gin.Context) {
 
 // Edit 修改数据
 func (a ConfigApi) Edit(c *gin.Context) {
-	config := entity.SysConfig{}
+	config := dataobject.SysConfig{}
 	if c.Bind(&config) != nil {
 		resp.ParamError(c)
 		return

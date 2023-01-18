@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/cache"
 	"cutego/pkg/excels"
@@ -43,7 +43,7 @@ func (a DictTypeApi) Get(c *gin.Context) {
 
 // Edit 修改字典类型
 func (a DictTypeApi) Edit(c *gin.Context) {
-	dictType := entity.SysDictType{}
+	dictType := dataobject.SysDictType{}
 	if c.Bind(&dictType) != nil {
 		resp.ParamError(c)
 		return
@@ -63,7 +63,7 @@ func (a DictTypeApi) Edit(c *gin.Context) {
 
 // Add 新增字典类型
 func (a DictTypeApi) Add(c *gin.Context) {
-	dictType := entity.SysDictType{}
+	dictType := dataobject.SysDictType{}
 	if c.Bind(&dictType) != nil {
 		resp.ParamError(c)
 		return

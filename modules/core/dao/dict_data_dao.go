@@ -1,8 +1,9 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"github.com/druidcaesa/gotool"
@@ -18,10 +19,10 @@ func (d *DictDataDao) sql(session *xorm.Session) *xorm.Session {
 
 // SelectByDictType 根据字典类型查询字典数据
 // @Param dictType string 字典类型
-// @Return []entity.SysDictData
-func (d *DictDataDao) SelectByDictType(dictType string) []entity.SysDictData {
-	data := make([]entity.SysDictData, 0)
-	session := d.sql(SqlDB.NewSession())
+// @Return []dataobject.SysDictData
+func (d *DictDataDao) SelectByDictType(dictType string) []dataobject.SysDictData {
+	data := make([]dataobject.SysDictData, 0)
+	session := d.sql(modules.SqlDB.NewSession())
 	err := session.Where("status = '0' ").And("dict_type = ?", dictType).OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
@@ -32,10 +33,10 @@ func (d *DictDataDao) SelectByDictType(dictType string) []entity.SysDictData {
 }
 
 // GetDiceDataAll 查询所有字典数据
-// @Return *[]entity.SysDictData
-func (d DictDataDao) GetDiceDataAll() *[]entity.SysDictData {
-	session := d.sql(SqlDB.NewSession())
-	data := make([]entity.SysDictData, 0)
+// @Return *[]dataobject.SysDictData
+func (d DictDataDao) GetDiceDataAll() *[]dataobject.SysDictData {
+	session := d.sql(modules.SqlDB.NewSession())
+	data := make([]dataobject.SysDictData, 0)
 	err := session.Where("status = '0' ").OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
@@ -47,11 +48,11 @@ func (d DictDataDao) GetDiceDataAll() *[]entity.SysDictData {
 
 // SelectPage 查询集合数据
 // @Param query request.DiceDataQuery
-// @Return *[]entity.SysDictData
+// @Return *[]dataobject.SysDictData
 // @Return 总行数
-func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]entity.SysDictData, int64) {
-	list := make([]entity.SysDictData, 0)
-	session := SqlDB.NewSession().Table("sys_dict_data").OrderBy("dict_sort").Asc("dict_sort")
+func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]dataobject.SysDictData, int64) {
+	list := make([]dataobject.SysDictData, 0)
+	session := modules.SqlDB.NewSession().Table("sys_dict_data").OrderBy("dict_sort").Asc("dict_sort")
 	if gotool.StrUtils.HasNotEmpty(query.DictType) {
 		session.And("dict_type = ?", query.DictType)
 	}
@@ -72,10 +73,10 @@ func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]entity.SysDict
 
 // SelectByDictCode 根据dictCode查询字典数据
 // @Param dictCode int64
-// @Return *entity.SysDictData
-func (d *DictDataDao) SelectByDictCode(dictCode int64) *entity.SysDictData {
-	data := entity.SysDictData{}
-	session := SqlDB.NewSession()
+// @Return *dataobject.SysDictData
+func (d *DictDataDao) SelectByDictCode(dictCode int64) *dataobject.SysDictData {
+	data := dataobject.SysDictData{}
+	session := modules.SqlDB.NewSession()
 	_, err := session.Where("dict_code = ?", dictCode).Get(&data)
 	if err != nil {
 		common.ErrorLog(err)
@@ -85,10 +86,10 @@ func (d *DictDataDao) SelectByDictCode(dictCode int64) *entity.SysDictData {
 }
 
 // Insert 添加字典数据
-// @Param data entity.SysDictData
+// @Param data dataobject.SysDictData
 // @Return 新增的行数
-func (d *DictDataDao) Insert(data entity.SysDictData) int64 {
-	session := SqlDB.NewSession()
+func (d *DictDataDao) Insert(data dataobject.SysDictData) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&data)
 	if err != nil {
@@ -102,9 +103,9 @@ func (d *DictDataDao) Insert(data entity.SysDictData) int64 {
 
 // Delete 删除字典数据
 func (d *DictDataDao) Delete(codes []int64) bool {
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.In("dict_code", codes).Delete(&entity.SysDictData{})
+	_, err := session.In("dict_code", codes).Delete(&dataobject.SysDictData{})
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -115,8 +116,8 @@ func (d *DictDataDao) Delete(codes []int64) bool {
 }
 
 // 修改字典数据
-func (d *DictDataDao) Update(data entity.SysDictData) bool {
-	session := SqlDB.NewSession()
+func (d *DictDataDao) Update(data dataobject.SysDictData) bool {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Where("dict_code = ?", data.DictCode).Update(&data)
 	if err != nil {

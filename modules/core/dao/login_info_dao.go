@@ -1,8 +1,9 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"github.com/go-xorm/xorm"
@@ -17,9 +18,9 @@ func (d LoginInfoDao) sql(session *xorm.Session) *xorm.Session {
 }
 
 // SelectPage 分页查询数据
-func (d LoginInfoDao) SelectPage(query request.LoginInfoQuery) (*[]entity.SysLoginInfo, int64) {
-	loginInfos := make([]entity.SysLoginInfo, 0)
-	session := d.sql(SqlDB.NewSession())
+func (d LoginInfoDao) SelectPage(query request.LoginInfoQuery) (*[]dataobject.SysLoginInfo, int64) {
+	loginInfos := make([]dataobject.SysLoginInfo, 0)
+	session := d.sql(modules.SqlDB.NewSession())
 	session.And("user_name = ?", query.UserName)
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&loginInfos)
@@ -31,8 +32,8 @@ func (d LoginInfoDao) SelectPage(query request.LoginInfoQuery) (*[]entity.SysLog
 }
 
 // Insert 添加登录记录
-func (d LoginInfoDao) Insert(body entity.SysLoginInfo) *entity.SysLoginInfo {
-	session := SqlDB.NewSession()
+func (d LoginInfoDao) Insert(body dataobject.SysLoginInfo) *dataobject.SysLoginInfo {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Table("sys_login_info").Insert(&body)
 	if err != nil {

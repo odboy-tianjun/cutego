@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/excels"
 	"cutego/pkg/file"
@@ -38,7 +38,7 @@ func (a PostApi) List(c *gin.Context) {
 
 // Add 新增岗位
 func (a PostApi) Add(c *gin.Context) {
-	post := entity.SysPost{}
+	post := dataobject.SysPost{}
 	if c.Bind(&post) != nil {
 		resp.ParamError(c)
 		return
@@ -96,7 +96,7 @@ func (a PostApi) Delete(c *gin.Context) {
 
 // Edit 修改岗位数据接口
 func (a PostApi) Edit(c *gin.Context) {
-	post := entity.SysPost{}
+	post := dataobject.SysPost{}
 	if c.Bind(&post) != nil {
 		resp.ParamError(c)
 		return

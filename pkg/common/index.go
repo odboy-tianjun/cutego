@@ -150,7 +150,7 @@ func StructToJson(v interface{}) string {
 // 切片(interface{}.(期望类型))
 // s := make([]interface {}, 0)
 // target := common.JsonToStruct(get, s)
-// target.([]entity.SysDictData)
+// target.([]dataobject.SysDictData)
 //
 // @Param data Json字符串
 // @Param s 容器(结构体、Map等)

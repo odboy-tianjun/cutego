@@ -1,8 +1,9 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"github.com/druidcaesa/gotool"
 )
@@ -11,9 +12,9 @@ type DeptDao struct {
 }
 
 // SelectTree 根据条件查询部门集合
-func (d DeptDao) SelectTree(query request.DeptQuery) *[]entity.SysDept {
-	depts := make([]entity.SysDept, 0)
-	session := SqlDB.NewSession().Where("del_flag = '0'")
+func (d DeptDao) SelectTree(query request.DeptQuery) *[]dataobject.SysDept {
+	depts := make([]dataobject.SysDept, 0)
+	session := modules.SqlDB.NewSession().Where("del_flag = '0'")
 	if query.ParentId > 0 {
 		session.And("parent_id = ?", query.ParentId)
 	}
@@ -34,7 +35,7 @@ func (d DeptDao) SelectTree(query request.DeptQuery) *[]entity.SysDept {
 // SelectDeptListByRoleId 根据角色ID查询部门树信息
 func (d DeptDao) SelectDeptListByRoleId(id int64, strictly bool) *[]int64 {
 	list := make([]int64, 0)
-	session := SqlDB.NewSession().Table([]string{"sys_dept", "d"}).Cols("d.dept_id")
+	session := modules.SqlDB.NewSession().Table([]string{"sys_dept", "d"}).Cols("d.dept_id")
 	session.Join("LEFT", []string{"sys_role_dept", "rd"}, "d.dept_id = rd.dept_id").
 		Where("rd.role_id = ?", id)
 	if strictly {
@@ -49,9 +50,9 @@ func (d DeptDao) SelectDeptListByRoleId(id int64, strictly bool) *[]int64 {
 }
 
 // GetList 查询部门列表
-func (d DeptDao) GetList(query request.DeptQuery) *[]entity.SysDept {
-	list := make([]entity.SysDept, 0)
-	session := SqlDB.NewSession().OrderBy("parent_id").OrderBy("order_num")
+func (d DeptDao) GetList(query request.DeptQuery) *[]dataobject.SysDept {
+	list := make([]dataobject.SysDept, 0)
+	session := modules.SqlDB.NewSession().OrderBy("parent_id").OrderBy("order_num")
 	session.Where("del_flag = '0'")
 	if query.ParentId > 0 {
 		session.And("parent_id = ?", query.ParentId)
@@ -71,9 +72,9 @@ func (d DeptDao) GetList(query request.DeptQuery) *[]entity.SysDept {
 }
 
 // SelectDeptById 根据部门编号获取详细信息
-func (d DeptDao) SelectDeptById(id int) *entity.SysDept {
-	dept := entity.SysDept{}
-	_, err := SqlDB.NewSession().Where("dept_id = ?", id).Get(&dept)
+func (d DeptDao) SelectDeptById(id int) *dataobject.SysDept {
+	dept := dataobject.SysDept{}
+	_, err := modules.SqlDB.NewSession().Where("dept_id = ?", id).Get(&dept)
 	if err != nil {
 		common.ErrorLog(err)
 		return nil
@@ -82,8 +83,8 @@ func (d DeptDao) SelectDeptById(id int) *entity.SysDept {
 }
 
 // Insert 添加部门数据
-func (d DeptDao) Insert(dept entity.SysDept) int64 {
-	session := SqlDB.NewSession()
+func (d DeptDao) Insert(dept dataobject.SysDept) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&dept)
 	if err != nil {
@@ -96,8 +97,8 @@ func (d DeptDao) Insert(dept entity.SysDept) int64 {
 }
 
 // CheckDeptNameUnique 校验部门名称是否唯一
-func (d DeptDao) CheckDeptNameUnique(dept entity.SysDept) int64 {
-	session := SqlDB.NewSession()
+func (d DeptDao) CheckDeptNameUnique(dept dataobject.SysDept) int64 {
+	session := modules.SqlDB.NewSession()
 	count, err := session.Table("sys_dept").Cols("dept_id").Where("dept_name=?", dept.DeptName).And("parent_id = ?", dept.ParentId).Limit(1).Count()
 	if err != nil {
 		common.ErrorLog(err)
@@ -109,24 +110,24 @@ func (d DeptDao) CheckDeptNameUnique(dept entity.SysDept) int64 {
 
 // HasChildByDeptId 是否存在部门子节点
 func (d DeptDao) HasChildByDeptId(id int) int64 {
-	count, _ := SqlDB.NewSession().Table("sys_dept").Cols("dept_id").Where("parent_id = ?", id).
+	count, _ := modules.SqlDB.NewSession().Table("sys_dept").Cols("dept_id").Where("parent_id = ?", id).
 		And("del_flag = '0'").Limit(1).Count()
 	return count
 }
 
 // CheckDeptExistUser 查询部门是否存在用户
 func (d DeptDao) CheckDeptExistUser(id int) int64 {
-	count, _ := SqlDB.NewSession().Table("sys_user").Cols("user_id").Where("dept_id = ?", id).
+	count, _ := modules.SqlDB.NewSession().Table("sys_user").Cols("user_id").Where("dept_id = ?", id).
 		And("del_flag = '0'").Count()
 	return count
 }
 
 // Delete 删除部门
 func (d DeptDao) Delete(id int) int64 {
-	dept := entity.SysDept{
+	dept := dataobject.SysDept{
 		DeptId: id,
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	i, err := session.Where("dept_id = ?", id).Delete(&dept)
 	if err != nil {
@@ -139,8 +140,8 @@ func (d DeptDao) Delete(id int) int64 {
 }
 
 // Update 更新部门
-func (d DeptDao) Update(dept entity.SysDept) int64 {
-	session := SqlDB.NewSession()
+func (d DeptDao) Update(dept dataobject.SysDept) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	update, err := session.Where("dept_id = ?", dept.DeptId).Update(&dept)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"github.com/druidcaesa/gotool"
 )
 
@@ -13,7 +13,7 @@ type PostService struct {
 }
 
 // FindAll 查询所有岗位业务方法
-func (s PostService) FindAll() []*entity.SysPost {
+func (s PostService) FindAll() []*dataobject.SysPost {
 	return s.postDao.SelectAll()
 }
 
@@ -23,28 +23,28 @@ func (s PostService) FindPostListByUserId(userId int64) *[]int64 {
 }
 
 // FindList 查询岗位分页列表
-func (s PostService) FindPage(query request.PostQuery) (*[]entity.SysPost, int64) {
+func (s PostService) FindPage(query request.PostQuery) (*[]dataobject.SysPost, int64) {
 	return s.postDao.SelectPage(query)
 }
 
 // CheckPostNameUnique 校验岗位名称是否存在
-func (s PostService) CheckPostNameUnique(post entity.SysPost) bool {
+func (s PostService) CheckPostNameUnique(post dataobject.SysPost) bool {
 	return s.postDao.CheckPostNameUnique(post) > 0
 }
 
 // CheckPostCodeUnique 校验岗位编码是否存在
-func (s PostService) CheckPostCodeUnique(post entity.SysPost) bool {
+func (s PostService) CheckPostCodeUnique(post dataobject.SysPost) bool {
 	return s.postDao.CheckPostCodeUnique(post) > 0
 }
 
 // Save 添加岗位数据
-func (s PostService) Save(post entity.SysPost) bool {
+func (s PostService) Save(post dataobject.SysPost) bool {
 	return s.postDao.Insert(post) > 0
 }
 
 // GetPostById 根据id查询岗位数据
-func (s PostService) GetPostById(id int64) *entity.SysPost {
-	post := entity.SysPost{
+func (s PostService) GetPostById(id int64) *dataobject.SysPost {
+	post := dataobject.SysPost{
 		PostId: id,
 	}
 	return s.postDao.GetPostById(post)
@@ -56,7 +56,7 @@ func (s PostService) Remove(ids []int64) bool {
 }
 
 // Edit 修改岗位数据
-func (s PostService) Edit(post entity.SysPost) bool {
+func (s PostService) Edit(post dataobject.SysPost) bool {
 	return s.postDao.Update(post)
 }
 

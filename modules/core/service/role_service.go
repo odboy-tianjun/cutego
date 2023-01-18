@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"github.com/druidcaesa/gotool"
 )
 
@@ -15,7 +15,7 @@ type RoleService struct {
 }
 
 // FindAll 查询所有角色
-func (s RoleService) FindAll(query *request.RoleQuery) ([]*entity.SysRole, int64) {
+func (s RoleService) FindAll(query *request.RoleQuery) ([]*dataobject.SysRole, int64) {
 	if query == nil {
 		all := s.roleDao.SelectAll()
 		return all, 0
@@ -29,42 +29,42 @@ func (s RoleService) FindRoleListByUserId(parseInt int64) *[]int64 {
 }
 
 // GetRoleListByUserId 根据用户ID查询角色
-func (s RoleService) GetRoleListByUserId(id int64) *[]entity.SysRole {
+func (s RoleService) GetRoleListByUserId(id int64) *[]dataobject.SysRole {
 	return s.roleDao.GetRoleListByUserId(id)
 }
 
 // FindPage 分页查询角色数据
-func (s RoleService) FindPage(query request.RoleQuery) ([]*entity.SysRole, int64) {
+func (s RoleService) FindPage(query request.RoleQuery) ([]*dataobject.SysRole, int64) {
 	return s.roleDao.SelectPage(&query)
 }
 
 // GetRoleByRoleId 根据角色id查询角色数据
-func (s RoleService) GetRoleByRoleId(id int64) *entity.SysRole {
+func (s RoleService) GetRoleByRoleId(id int64) *dataobject.SysRole {
 	return s.roleDao.SelectRoleByRoleId(id)
 }
 
 // CheckRoleNameUnique 判断角色名城是否存在
-func (s RoleService) CheckRoleNameUnique(role entity.SysRole) int64 {
+func (s RoleService) CheckRoleNameUnique(role dataobject.SysRole) int64 {
 	return s.roleDao.CheckRoleNameUnique(role)
 }
 
 // CheckRoleKeyUnique 校验角色权限是否唯一
-func (s RoleService) CheckRoleKeyUnique(role entity.SysRole) int64 {
+func (s RoleService) CheckRoleKeyUnique(role dataobject.SysRole) int64 {
 	return s.roleDao.CheckRoleKeyUnique(role)
 
 }
 
 // Save 添加角色数据
-func (s RoleService) Save(role entity.SysRole) int64 {
+func (s RoleService) Save(role dataobject.SysRole) int64 {
 	role = s.roleDao.Insert(role)
 	return s.BindRoleMenu(role)
 }
 
 // 添加角色菜单关系
-func (s RoleService) BindRoleMenu(role entity.SysRole) int64 {
-	list := make([]entity.SysRoleMenu, 0)
+func (s RoleService) BindRoleMenu(role dataobject.SysRole) int64 {
+	list := make([]dataobject.SysRoleMenu, 0)
 	for _, id := range role.MenuIds {
-		menu := entity.SysRoleMenu{
+		menu := dataobject.SysRoleMenu{
 			RoleId: role.RoleId,
 			MenuId: id,
 		}
@@ -74,7 +74,7 @@ func (s RoleService) BindRoleMenu(role entity.SysRole) int64 {
 }
 
 // Edit 修改角色数据
-func (s RoleService) Edit(role entity.SysRole) int64 {
+func (s RoleService) Edit(role dataobject.SysRole) int64 {
 	// 删除菜单关联关系
 	s.roleMenuDao.Delete(role)
 	s.BindRoleMenu(role)
@@ -84,7 +84,7 @@ func (s RoleService) Edit(role entity.SysRole) int64 {
 
 // Remove 删除角色
 func (s RoleService) Remove(id int64) int64 {
-	role := entity.SysRole{
+	role := dataobject.SysRole{
 		RoleId: id,
 	}
 	// 删除菜单角色关系
@@ -102,12 +102,12 @@ func (s RoleService) CheckRoleAllowed(id int64) (bool, string) {
 }
 
 // EditRoleStatus 角色状态修改
-func (s RoleService) EditRoleStatus(role *entity.SysRole) int64 {
+func (s RoleService) EditRoleStatus(role *dataobject.SysRole) int64 {
 	return s.roleDao.UpdateRoleStatus(role)
 }
 
 // DeleteAuthUser 取消授权用户
-func (s RoleService) DeleteAuthUser(userRole entity.SysUserRole) int64 {
+func (s RoleService) DeleteAuthUser(userRole dataobject.SysUserRole) int64 {
 	return s.userRoleDao.DeleteAuthUser(userRole)
 }
 

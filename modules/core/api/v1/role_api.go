@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/excels"
 	"cutego/pkg/page"
@@ -50,7 +50,7 @@ func (a RoleApi) GetRoleId(c *gin.Context) {
 
 // Add 添加角色业务操作
 func (a RoleApi) Add(c *gin.Context) {
-	role := entity.SysRole{}
+	role := dataobject.SysRole{}
 	if c.BindJSON(&role) == nil {
 		if a.roleService.CheckRoleNameUnique(role) > 0 {
 			c.JSON(500, resp.ErrorResp(500, "新增角色'"+role.RoleName+"'失败, 角色名称已存在"))
@@ -70,7 +70,7 @@ func (a RoleApi) Add(c *gin.Context) {
 
 // Edit 修改角色
 func (a RoleApi) Edit(c *gin.Context) {
-	role := entity.SysRole{}
+	role := dataobject.SysRole{}
 	if c.BindJSON(&role) == nil {
 		if a.roleService.CheckRoleNameUnique(role) > 0 {
 			c.JSON(500, resp.ErrorResp(500, "修改角色'"+role.RoleName+"'失败, 角色名称已存在"))
@@ -106,7 +106,7 @@ func (a RoleApi) Delete(c *gin.Context) {
 
 // ChangeStatus 状态修改
 func (a RoleApi) ChangeStatus(c *gin.Context) {
-	body := entity.SysRole{}
+	body := dataobject.SysRole{}
 	if c.BindJSON(&body) != nil {
 		c.JSON(500, resp.ErrorResp("参数绑定异常"))
 		return
@@ -155,7 +155,7 @@ func (a RoleApi) UnallocatedList(c *gin.Context) {
 
 // CancelAuthUser 取消授权用户
 func (a RoleApi) CancelAuthUser(c *gin.Context) {
-	roleUser := entity.SysUserRole{}
+	roleUser := dataobject.SysUserRole{}
 	if c.BindJSON(&roleUser) != nil {
 		resp.Error(c)
 		return

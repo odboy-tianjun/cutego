@@ -3,7 +3,7 @@ package service
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 type DeptService struct {
@@ -12,7 +12,7 @@ type DeptService struct {
 }
 
 // TreeSelect 根据条件查询部门树
-func (s DeptService) FindTreeSelect(query request.DeptQuery) *[]entity.SysDept {
+func (s DeptService) FindTreeSelect(query request.DeptQuery) *[]dataobject.SysDept {
 	treeSelect := s.deptDao.SelectTree(query)
 	return treeSelect
 }
@@ -24,22 +24,22 @@ func (s DeptService) FindDeptListByRoleId(id int64) *[]int64 {
 }
 
 // FindDeptList 查询部门列表
-func (s DeptService) FindDeptList(query request.DeptQuery) *[]entity.SysDept {
+func (s DeptService) FindDeptList(query request.DeptQuery) *[]dataobject.SysDept {
 	return s.deptDao.GetList(query)
 }
 
 // GetDeptById 根据部门编号获取详细信息
-func (s DeptService) GetDeptById(id int) *entity.SysDept {
+func (s DeptService) GetDeptById(id int) *dataobject.SysDept {
 	return s.deptDao.SelectDeptById(id)
 }
 
 // Save 添加部门数据
-func (s DeptService) Save(dept entity.SysDept) int64 {
+func (s DeptService) Save(dept dataobject.SysDept) int64 {
 	return s.deptDao.Insert(dept)
 }
 
 // CheckDeptNameUnique 校验部门名称是否唯一
-func (s DeptService) CheckDeptNameUnique(dept entity.SysDept) bool {
+func (s DeptService) CheckDeptNameUnique(dept dataobject.SysDept) bool {
 	if s.deptDao.CheckDeptNameUnique(dept) > 0 {
 		return true
 	}
@@ -62,6 +62,6 @@ func (s DeptService) CheckDeptExistUser(id int) int64 {
 }
 
 // 修改部门
-func (s DeptService) Edit(dept entity.SysDept) bool {
+func (s DeptService) Edit(dept dataobject.SysDept) bool {
 	return s.deptDao.Update(dept) > 0
 }

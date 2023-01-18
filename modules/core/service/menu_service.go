@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 type MenuService struct {
@@ -13,10 +13,10 @@ type MenuService struct {
 }
 
 // GetMenuTreeByUserId 根据用户ID查询菜单
-func (s MenuService) GetMenuTreeByUserId(user *response.UserResponse) *[]entity.SysMenu {
-	var menuList *[]entity.SysMenu
+func (s MenuService) GetMenuTreeByUserId(user *response.UserResponse) *[]dataobject.SysMenu {
+	var menuList *[]dataobject.SysMenu
 	// 判断是否是管理员
-	flag := entity.SysUser{}.IsAdmin(user.UserId)
+	flag := dataobject.SysUser{}.IsAdmin(user.UserId)
 	if flag {
 		menuList = s.menuDao.GetMenuAll()
 	} else {
@@ -32,7 +32,7 @@ func (s MenuService) FindMenuListByRoleId(id int64) *[]int64 {
 }
 
 // GetMenuList 获取菜单列表
-func (s MenuService) FindMenuList(query request.MenuQuery, info *response.UserResponse) *[]entity.SysMenu {
+func (s MenuService) FindMenuList(query request.MenuQuery, info *response.UserResponse) *[]dataobject.SysMenu {
 	if info.IsAdmin() {
 		return s.menuDao.SelectMenuList(query)
 	} else {
@@ -42,17 +42,17 @@ func (s MenuService) FindMenuList(query request.MenuQuery, info *response.UserRe
 }
 
 // GetMenuByMenuId 根据菜单ID查询信息
-func (s MenuService) GetMenuByMenuId(id int) *entity.SysMenu {
+func (s MenuService) GetMenuByMenuId(id int) *dataobject.SysMenu {
 	return s.menuDao.SelectMenuByMenuId(id)
 }
 
 // Save 添加菜单数据
-func (s MenuService) Save(menu entity.SysMenu) int64 {
+func (s MenuService) Save(menu dataobject.SysMenu) int64 {
 	return s.menuDao.Insert(menu)
 }
 
 // Edit 修改菜单数据
-func (s MenuService) Edit(menu entity.SysMenu) int64 {
+func (s MenuService) Edit(menu dataobject.SysMenu) int64 {
 	return s.menuDao.Update(menu)
 }
 

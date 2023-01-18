@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/resp"
 	"cutego/pkg/tree/tree_menu"
@@ -68,7 +68,7 @@ func (a MenuApi) TreeSelect(c *gin.Context) {
 
 // Add 添加菜单数据
 func (a MenuApi) Add(c *gin.Context) {
-	menu := entity.SysMenu{}
+	menu := dataobject.SysMenu{}
 	if c.Bind(&menu) != nil {
 		resp.ParamError(c, "参数绑定异常")
 		return
@@ -82,7 +82,7 @@ func (a MenuApi) Add(c *gin.Context) {
 
 // Edit 修改菜单数据
 func (a MenuApi) Edit(c *gin.Context) {
-	menu := entity.SysMenu{}
+	menu := dataobject.SysMenu{}
 	if c.Bind(&menu) != nil {
 		resp.ParamError(c)
 		return

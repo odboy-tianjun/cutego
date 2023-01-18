@@ -3,7 +3,7 @@ package v1
 import (
 	request2 "cutego/modules/core/api/v1/request"
 	cache2 "cutego/modules/core/cache"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/common"
 	"cutego/pkg/page"
@@ -56,7 +56,7 @@ func (a LoginApi) handleLoginInfo(c *gin.Context, body request2.LoginBody, login
 		location = a.loginInfoService.GetLocationByIp(clientIp).Country
 	}
 
-	a.loginInfoService.Save(entity.SysLoginInfo{
+	a.loginInfoService.Save(dataobject.SysLoginInfo{
 		UserName:      body.UserName,
 		IpAddr:        clientIp,
 		LoginLocation: location,

@@ -1,4 +1,4 @@
-package entity
+package dataobject
 
 type SysUserRole struct {
 	UserId int64 `xorm:"pk" json:"userId"` // 用户id

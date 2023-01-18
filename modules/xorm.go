@@ -1,7 +1,8 @@
-package dao
+package modules
 
 import (
-	models2 "cutego/modules/core/entity"
+	"cutego/modules/core/dao"
+	models2 "cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/config"
 	"cutego/pkg/constant"
@@ -70,10 +71,10 @@ func cacheInitDataToRedis() {
 
 func initDict() {
 	// 查询字典类型数据
-	dictTypeDao := new(DictTypeDao)
+	dictTypeDao := new(dao.DictTypeDao)
 	typeAll := dictTypeDao.SelectAll()
 	// 所有字典数据
-	d := new(DictDataDao)
+	d := new(dao.DictDataDao)
 	listData := d.GetDiceDataAll()
 	for _, dictType := range typeAll {
 		dictData := make([]map[string]interface{}, 0)
@@ -95,8 +96,7 @@ func initDict() {
 
 func initConfig() {
 	// 查询配置数据存入到缓存中
-	configDao := new(ConfigDao)
-	configSession := configDao.sql(SqlDB.NewSession())
+	configSession := SqlDB.NewSession().Table("sys_config")
 	configs := make([]*models2.SysConfig, 0)
 	err := configSession.Find(&configs)
 	if err != nil {

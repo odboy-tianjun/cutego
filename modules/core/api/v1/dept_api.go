@@ -2,7 +2,7 @@ package v1
 
 import (
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/resp"
 	"cutego/pkg/tree/tree_dept"
@@ -64,7 +64,7 @@ func (a DeptApi) ExcludeChild(c *gin.Context) {
 	}
 	list := a.deptService.FindDeptList(request.DeptQuery{})
 	var depts = *list
-	deptList := make([]entity.SysDept, 0)
+	deptList := make([]dataobject.SysDept, 0)
 	for _, dept := range depts {
 		if dept.DeptId == deptId || strings.Contains(dept.Ancestors, strconv.Itoa(deptId)) {
 			continue
@@ -87,7 +87,7 @@ func (a DeptApi) GetInfo(c *gin.Context) {
 
 // Add 添加部门
 func (a DeptApi) Add(c *gin.Context) {
-	dept := entity.SysDept{}
+	dept := dataobject.SysDept{}
 	if c.Bind(&dept) != nil {
 		resp.ParamError(c)
 		return
@@ -134,7 +134,7 @@ func (a DeptApi) Delete(c *gin.Context) {
 
 // Edit 修改部门数据接口
 func (a DeptApi) Edit(c *gin.Context) {
-	dept := entity.SysDept{}
+	dept := dataobject.SysDept{}
 	if c.Bind(&dept) != nil {
 		resp.ParamError(c)
 		return

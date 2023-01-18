@@ -3,7 +3,7 @@ package service
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"github.com/gin-gonic/gin"
 	"github.com/go-basic/uuid"
 )
@@ -16,12 +16,12 @@ type LogService struct {
 }
 
 // FindPage 分页查询数据
-func (s LogService) FindPage(query request.LogQuery) ([]entity.SysLog, int64) {
+func (s LogService) FindPage(query request.LogQuery) ([]dataobject.SysLog, int64) {
 	return s.logDao.SelectPage(query)
 }
 
 // Save 添加数据
-func (s LogService) save(config entity.SysLog) int64 {
+func (s LogService) save(config dataobject.SysLog) int64 {
 	return s.logDao.Insert(config)
 }
 
@@ -32,7 +32,7 @@ func (s LogService) LogToDB(c *gin.Context, content string) {
 		uid = DEFAULT_UID_KEY
 	}
 	uidStr := uid.(string)
-	s.save(entity.SysLog{Uid: uidStr, Content: content})
+	s.save(dataobject.SysLog{Uid: uidStr, Content: content})
 }
 
 // 开始记录日志前调用(只调用一次)

@@ -1,7 +1,7 @@
 package tree_menu
 
 import (
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"github.com/druidcaesa/gotool"
 	"sort"
 )
@@ -74,7 +74,7 @@ func GenerateTree(nodes, selectedNodes []INode) (trees []Tree) {
 		var component = "Layout"
 		m := make(map[string]interface{})
 		if v.GetData() != nil {
-			menu := v.GetData().(entity.SysMenu)
+			menu := v.GetData().(dataobject.SysMenu)
 			m["title"] = menu.MenuName
 			m["icon"] = menu.Icon
 			m["noCache"] = menu.IsCache == 1
@@ -133,7 +133,7 @@ func recursiveTree(tree *Tree, nodes, selectedNodes []INode) {
 		var component = "Layout"
 		m := make(map[string]interface{})
 		if v.GetData() != nil {
-			menu := v.GetData().(entity.SysMenu)
+			menu := v.GetData().(dataobject.SysMenu)
 			flag = menu.Visible == "1"
 			m["title"] = menu.MenuName
 			m["icon"] = menu.Icon
@@ -265,10 +265,10 @@ func nodePartialSelected(trees []Tree) bool {
 	return true
 }
 
-type SystemMenus []entity.SysMenu
+type SystemMenus []dataobject.SysMenu
 
 // ConvertToINodeArray 将当前数组转换成父类 INode 接口 数组
-func (s SystemMenus) ConvertToINodeArray(*[]entity.SysMenu) (nodes []INode) {
+func (s SystemMenus) ConvertToINodeArray(*[]dataobject.SysMenu) (nodes []INode) {
 	for _, v := range s {
 		nodes = append(nodes, v)
 	}
@@ -276,7 +276,7 @@ func (s SystemMenus) ConvertToINodeArray(*[]entity.SysMenu) (nodes []INode) {
 }
 
 // GetTree 获取树结构数据
-func (s SystemMenus) GetTree(m *[]entity.SysMenu) []Tree {
+func (s SystemMenus) GetTree(m *[]dataobject.SysMenu) []Tree {
 	s = *m
 	array := s.ConvertToINodeArray(m)
 	return GenerateTree(array, nil)

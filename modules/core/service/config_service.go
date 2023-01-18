@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	cache2 "cutego/modules/core/cache"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 type ConfigService struct {
@@ -12,7 +12,7 @@ type ConfigService struct {
 }
 
 // GetConfigKey 根据键名查询参数配置信息
-func (s ConfigService) GetConfigKey(param string) *entity.SysConfig {
+func (s ConfigService) GetConfigKey(param string) *dataobject.SysConfig {
 	// 从缓存中取出数据判断是否存在, 存在直接使用, 不存在就从数据库查询
 	val := cache2.GetRedisConfig(param)
 	if val != nil {
@@ -24,27 +24,27 @@ func (s ConfigService) GetConfigKey(param string) *entity.SysConfig {
 }
 
 // FindPage 分页查询数据
-func (s ConfigService) FindPage(query request.ConfigQuery) (*[]entity.SysConfig, int64) {
+func (s ConfigService) FindPage(query request.ConfigQuery) (*[]dataobject.SysConfig, int64) {
 	return s.configDao.SelectPage(query)
 }
 
 // CheckConfigKeyUnique 校验是否存在
-func (s ConfigService) CheckConfigKeyUnique(config entity.SysConfig) bool {
+func (s ConfigService) CheckConfigKeyUnique(config dataobject.SysConfig) bool {
 	return s.configDao.CheckConfigKeyUnique(config) > 0
 }
 
 // Save 添加数据
-func (s ConfigService) Save(config entity.SysConfig) int64 {
+func (s ConfigService) Save(config dataobject.SysConfig) int64 {
 	return s.configDao.Insert(config)
 }
 
 // GetInfo 查询数据
-func (s ConfigService) GetInfo(id int64) *entity.SysConfig {
+func (s ConfigService) GetInfo(id int64) *dataobject.SysConfig {
 	return s.configDao.SelectById(id)
 }
 
 // Edit 修改数据
-func (s ConfigService) Edit(config entity.SysConfig) int64 {
+func (s ConfigService) Edit(config dataobject.SysConfig) int64 {
 	return s.configDao.Update(config)
 }
 
@@ -54,11 +54,11 @@ func (s ConfigService) Remove(list []int64) bool {
 }
 
 // CheckConfigByIds 根据id集合查询
-func (s ConfigService) CheckConfigByIds(list []int64) *[]entity.SysConfig {
+func (s ConfigService) CheckConfigByIds(list []int64) *[]dataobject.SysConfig {
 	return s.configDao.CheckConfigByIds(list)
 }
 
 // FindAll 查询所有数据
-func (s ConfigService) FindAll() *[]entity.SysConfig {
+func (s ConfigService) FindAll() *[]dataobject.SysConfig {
 	return s.configDao.SelectAll()
 }

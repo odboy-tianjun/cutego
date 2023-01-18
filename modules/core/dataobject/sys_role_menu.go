@@ -1,4 +1,4 @@
-package entity
+package dataobject
 
 // SysRoleMenu 角色菜单数据结构
 type SysRoleMenu struct {

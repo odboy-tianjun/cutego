@@ -1,7 +1,7 @@
 package cache
 
 import (
-	models2 "cutego/modules/core/entity"
+	models2 "cutego/modules/core/dataobject"
 	"cutego/pkg/cache"
 	"cutego/pkg/common"
 	"cutego/pkg/constant"

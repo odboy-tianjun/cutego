@@ -3,7 +3,7 @@ package service
 import (
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"github.com/druidcaesa/gotool"
 )
 
@@ -14,7 +14,7 @@ type PermissionService struct {
 
 // GetRolePermissionByUserId 查询用户角色集合
 func (s PermissionService) GetRolePermissionByUserId(user *response.UserResponse) *[]string {
-	admin := entity.SysUser{}.IsAdmin(user.UserId)
+	admin := dataobject.SysUser{}.IsAdmin(user.UserId)
 	roleKeys := s.roleDao.SelectRolePermissionByUserId(user.UserId)
 	if admin && roleKeys != nil {
 		*roleKeys = append(*roleKeys, "admin")
@@ -25,7 +25,7 @@ func (s PermissionService) GetRolePermissionByUserId(user *response.UserResponse
 
 // GetMenuPermission 获取菜单数据权限
 func (s PermissionService) GetMenuPermission(user *response.UserResponse) *[]string {
-	flag := entity.SysUser{}.IsAdmin(user.UserId)
+	flag := dataobject.SysUser{}.IsAdmin(user.UserId)
 	// 查询菜单数据权限
 	permission := s.menuDao.GetMenuPermission(user.UserId)
 	if flag && permission != nil {

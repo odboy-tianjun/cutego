@@ -1,4 +1,4 @@
-package entity
+package dataobject
 
 type SysUserPost struct {
 	UserId int64 `json:"userId"` // 用户id

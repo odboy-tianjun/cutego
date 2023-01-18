@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	cache2 "cutego/modules/core/cache"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 type DictTypeService struct {
@@ -13,27 +13,27 @@ type DictTypeService struct {
 }
 
 // FindPage 分页查询字典类型数据
-func (s DictTypeService) FindPage(query request.DictTypeQuery) (*[]entity.SysDictType, int64) {
+func (s DictTypeService) FindPage(query request.DictTypeQuery) (*[]dataobject.SysDictType, int64) {
 	return s.dictTypeDao.SelectPage(query)
 }
 
 // GetById 根据id查询字典类型数据
-func (s DictTypeService) GetById(id int64) *entity.SysDictType {
+func (s DictTypeService) GetById(id int64) *dataobject.SysDictType {
 	return s.dictTypeDao.SelectById(id)
 }
 
 // CheckDictTypeUnique 检验字典类型是否存在
-func (s DictTypeService) CheckDictTypeUnique(dictType entity.SysDictType) bool {
+func (s DictTypeService) CheckDictTypeUnique(dictType dataobject.SysDictType) bool {
 	return s.dictTypeDao.CheckDictTypeUnique(dictType) > 0
 }
 
 // Edit 修改字典数据
-func (s DictTypeService) Edit(dictType entity.SysDictType) bool {
+func (s DictTypeService) Edit(dictType dataobject.SysDictType) bool {
 	return s.dictTypeDao.Update(dictType)
 }
 
 // Save 新增字典类型
-func (s DictTypeService) Save(dictType entity.SysDictType) bool {
+func (s DictTypeService) Save(dictType dataobject.SysDictType) bool {
 	insert := s.dictTypeDao.Insert(dictType)
 	if insert > 0 {
 		cache2.SetRedisDict(dictType.DictType, nil)
@@ -47,7 +47,7 @@ func (s DictTypeService) Remove(ids []int64) bool {
 }
 
 // FindAll 查询所有字典类型数据
-func (s DictTypeService) FindAll() []*entity.SysDictType {
+func (s DictTypeService) FindAll() []*dataobject.SysDictType {
 	return s.dictTypeDao.SelectAll()
 }
 
@@ -72,7 +72,7 @@ func (s DictTypeService) LoadDictCache() {
 	}
 	allData := s.dictDataDao.GetDiceDataAll()
 	for _, key := range typeList {
-		list := make([]entity.SysDictData, 0)
+		list := make([]dataobject.SysDictData, 0)
 		for _, data := range *allData {
 			if key == data.DictType {
 				list = append(list, data)
@@ -87,7 +87,7 @@ func (s DictTypeService) RefreshCache() {
 	typeList := s.RemoveAllCache()
 	allData := s.dictDataDao.GetDiceDataAll()
 	for _, key := range typeList {
-		list := make([]entity.SysDictData, 0)
+		list := make([]dataobject.SysDictData, 0)
 		for _, data := range *allData {
 			if key == data.DictType {
 				list = append(list, data)

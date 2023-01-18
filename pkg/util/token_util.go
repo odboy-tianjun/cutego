@@ -1,9 +1,9 @@
 package util
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 	"cutego/pkg/config"
 	"cutego/pkg/jwt"
@@ -32,7 +32,7 @@ func CheckLockToken(c *gin.Context) bool {
 	if config.AppEnvConfig.Login.Single {
 		// 获取redis中的token数据
 		info := GetUserInfo(c)
-		get, err := dao.RedisDB.GET(info.UserName)
+		get, err := modules.RedisDB.GET(info.UserName)
 		if err != nil {
 			common.ErrorLog(err)
 			return false
@@ -49,7 +49,7 @@ func CheckLockToken(c *gin.Context) bool {
 }
 
 // CheckIsAdmin 判断是否是超级管理员
-func CheckIsAdmin(user *entity.SysUser) bool {
+func CheckIsAdmin(user *dataobject.SysUser) bool {
 	if user.UserId == 1 {
 		return true
 	} else {

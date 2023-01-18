@@ -80,7 +80,7 @@ gitee地址:  https://gitee.com/odboy/cutego-ui
 
 eg.
 cutego
-  school
+  student
     dataobject
     dao
     service
@@ -88,6 +88,12 @@ cutego
     router
 [模块名称] entity -> dao -> service -> api -> router
 ```
+#### SQL转换器
+```text
+http://www.gotool.top/handlesql/sql2xorm
+```
+![img.png](docs/images/sql转xorm1.png)   
+
 
 #### 交叉编译, 产出可执行程序
 

@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dao"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 )
 
 // UserService 用户操作业务逻辑
@@ -25,19 +25,19 @@ func (s UserService) GetUserById(parseInt int64) *response.UserResponse {
 }
 
 // GetUserByUserName 根据用户名查询用户
-func (s UserService) GetUserByUserName(name string) *entity.SysUser {
-	user := entity.SysUser{}
+func (s UserService) GetUserByUserName(name string) *dataobject.SysUser {
+	user := dataobject.SysUser{}
 	user.UserName = name
 	return s.userDao.GetUserByUserName(user)
 }
 
 // CheckEmailUnique 校验邮箱是否存在
-func (s UserService) CheckEmailUnique(user request.UserBody) *entity.SysUser {
+func (s UserService) CheckEmailUnique(user request.UserBody) *dataobject.SysUser {
 	return s.userDao.CheckEmailUnique(user)
 }
 
 // CheckPhoneNumUnique 校验手机号是否存在
-func (s UserService) CheckPhoneNumUnique(body request.UserBody) *entity.SysUser {
+func (s UserService) CheckPhoneNumUnique(body request.UserBody) *dataobject.SysUser {
 	return s.userDao.CheckPhoneNumUnique(body)
 }
 
@@ -57,9 +57,9 @@ func (s UserService) Save(body request.UserBody) bool {
 func (s UserService) BindUserPost(user *request.UserBody) {
 	postIds := user.PostIds
 	if len(postIds) > 0 {
-		sysUserPosts := make([]entity.SysUserPost, 0)
+		sysUserPosts := make([]dataobject.SysUserPost, 0)
 		for i := 0; i < len(postIds); i++ {
-			m := entity.SysUserPost{
+			m := dataobject.SysUserPost{
 				UserId: user.UserId,
 				PostId: postIds[i],
 			}
@@ -73,9 +73,9 @@ func (s UserService) BindUserPost(user *request.UserBody) {
 func (s UserService) BindUserRole(user *request.UserBody) {
 	roleIds := user.RoleIds
 	if len(roleIds) > 0 {
-		roles := make([]entity.SysUserRole, 0)
+		roles := make([]dataobject.SysUserRole, 0)
 		for i := 0; i < len(roleIds); i++ {
-			role := entity.SysUserRole{
+			role := dataobject.SysUserRole{
 				RoleId: roleIds[i],
 				UserId: user.UserId,
 			}
@@ -111,7 +111,7 @@ func (s UserService) Remove(id int64) int64 {
 
 // CheckUserAllowed 校验是否可以修改用户密码
 func (s UserService) CheckUserAllowed(body request.UserBody) bool {
-	user := entity.SysUser{}
+	user := dataobject.SysUser{}
 	return user.IsAdmin(body.UserId)
 }
 

@@ -1,7 +1,7 @@
 package tree_dept
 
 import (
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"sort"
 )
 
@@ -201,10 +201,10 @@ func nodePartialSelected(trees []Tree) bool {
 	return true
 }
 
-type DeptList []entity.SysDept
+type DeptList []dataobject.SysDept
 
 // ConvertToINodeArray 将当前数组转换成父类 INode 接口 数组
-func (s DeptList) ConvertToINodeArray(*[]entity.SysDept) (nodes []INode) {
+func (s DeptList) ConvertToINodeArray(*[]dataobject.SysDept) (nodes []INode) {
 	for _, v := range s {
 		nodes = append(nodes, v)
 	}
@@ -212,7 +212,7 @@ func (s DeptList) ConvertToINodeArray(*[]entity.SysDept) (nodes []INode) {
 }
 
 // GetTree 获取树结构
-func (s DeptList) GetTree(treeSelect *[]entity.SysDept) []Tree {
+func (s DeptList) GetTree(treeSelect *[]dataobject.SysDept) []Tree {
 	s = *treeSelect
 	array := s.ConvertToINodeArray(treeSelect)
 	return GenerateTree(array, nil)

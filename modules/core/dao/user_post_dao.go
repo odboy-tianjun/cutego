@@ -1,7 +1,8 @@
 package dao
 
 import (
-	"cutego/modules/core/entity"
+	"cutego/modules"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 )
 
@@ -9,10 +10,10 @@ type UserPostDao struct {
 }
 
 // BatchInsert 批量新增用户岗位信息
-func (d UserPostDao) BatchInsert(posts []entity.SysUserPost) {
-	session := SqlDB.NewSession()
+func (d UserPostDao) BatchInsert(posts []dataobject.SysUserPost) {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.Table(entity.SysUserPost{}.TableName()).Insert(&posts)
+	_, err := session.Table(dataobject.SysUserPost{}.TableName()).Insert(&posts)
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -23,10 +24,10 @@ func (d UserPostDao) BatchInsert(posts []entity.SysUserPost) {
 
 // Delete 删除用户和岗位关系
 func (d UserPostDao) Delete(id int64) {
-	post := entity.SysUserPost{
+	post := dataobject.SysUserPost{
 		UserId: id,
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Delete(&post)
 	if err != nil {
@@ -38,7 +39,7 @@ func (d UserPostDao) Delete(id int64) {
 
 // CountById 通过岗位ID查询岗位使用数量
 func (d UserPostDao) CountById(id int64) int64 {
-	count, err := SqlDB.NewSession().Table("sys_user_post").Cols("post_id").Where("post_id = ?", id).Count()
+	count, err := modules.SqlDB.NewSession().Table("sys_user_post").Cols("post_id").Where("post_id = ?", id).Count()
 	if err != nil {
 		common.ErrorLog(err)
 		return 0

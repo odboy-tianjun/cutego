@@ -1,8 +1,9 @@
 package dao
 
 import (
+	"cutego/modules"
 	"cutego/modules/core/api/v1/request"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/pkg/common"
 )
 
@@ -10,10 +11,10 @@ type UserRoleDao struct {
 }
 
 // BatchInsert 批量新增用户角色信息
-func (d UserRoleDao) BatchInsert(roles []entity.SysUserRole) {
-	session := SqlDB.NewSession()
+func (d UserRoleDao) BatchInsert(roles []dataobject.SysUserRole) {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
-	_, err := session.Table(entity.SysUserRole{}.TableName()).Insert(&roles)
+	_, err := session.Table(dataobject.SysUserRole{}.TableName()).Insert(&roles)
 	if err != nil {
 		common.ErrorLog(err)
 		session.Rollback()
@@ -24,10 +25,10 @@ func (d UserRoleDao) BatchInsert(roles []entity.SysUserRole) {
 
 // Delete 删除用户和角色关系
 func (d UserRoleDao) Delete(id int64) {
-	role := entity.SysUserRole{
+	role := dataobject.SysUserRole{
 		UserId: id,
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	_, err := session.Delete(&role)
 	if err != nil {
@@ -39,8 +40,8 @@ func (d UserRoleDao) Delete(id int64) {
 }
 
 // DeleteAuthUser 取消用户授权
-func (d UserRoleDao) DeleteAuthUser(role entity.SysUserRole) int64 {
-	session := SqlDB.NewSession()
+func (d UserRoleDao) DeleteAuthUser(role dataobject.SysUserRole) int64 {
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	i, err := session.Delete(&role)
 	if err != nil {
@@ -55,15 +56,15 @@ func (d UserRoleDao) DeleteAuthUser(role entity.SysUserRole) int64 {
 // InsertAuthUsers 批量选择用户授权
 func (d UserRoleDao) InsertAuthUsers(body request.UserRoleBody) int64 {
 	ids := body.UserIds
-	roles := make([]entity.SysUserRole, 0)
+	roles := make([]dataobject.SysUserRole, 0)
 	for i := 0; i < len(ids); i++ {
-		role := entity.SysUserRole{
+		role := dataobject.SysUserRole{
 			RoleId: body.RoleId,
 			UserId: ids[i],
 		}
 		roles = append(roles, role)
 	}
-	session := SqlDB.NewSession()
+	session := modules.SqlDB.NewSession()
 	session.Begin()
 	insert, err := session.Insert(&roles)
 	if err != nil {

@@ -3,7 +3,7 @@ package v1
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
-	"cutego/modules/core/entity"
+	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
 	"cutego/pkg/excels"
 	"cutego/pkg/file"
@@ -66,7 +66,7 @@ func (a DictDataApi) Get(c *gin.Context) {
 
 // Add 添加字典数据
 func (a DictDataApi) Add(c *gin.Context) {
-	data := entity.SysDictData{}
+	data := dataobject.SysDictData{}
 	if c.Bind(&data) != nil {
 		resp.ParamError(c)
 		return
@@ -81,7 +81,7 @@ func (a DictDataApi) Add(c *gin.Context) {
 
 // Edit 编辑字典数据
 func (a DictDataApi) Edit(c *gin.Context) {
-	data := entity.SysDictData{}
+	data := dataobject.SysDictData{}
 	if c.Bind(&data) != nil {
 		resp.ParamError(c)
 		return
