@@ -3,7 +3,6 @@ package cache
 import (
 	models2 "cutego/modules/core/dataobject"
 	"cutego/pkg/cache"
-	"cutego/pkg/common"
 	"cutego/pkg/constant"
 )
 
@@ -13,7 +12,7 @@ import (
 func GetRedisDict(key string) interface{} {
 	val := cache.GetCache(key)
 	s := make([]interface{}, 0)
-	return common.JsonToStruct(val, s)
+	return cache.JsonToStruct(val, s)
 }
 
 // SetRedisDict 保存字典数据

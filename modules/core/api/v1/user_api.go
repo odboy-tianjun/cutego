@@ -5,7 +5,7 @@ import (
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
-	"cutego/pkg/common"
+	"cutego/pkg/config"
 	"cutego/pkg/excels"
 	"cutego/pkg/logging"
 	"cutego/pkg/page"
@@ -287,7 +287,7 @@ func (a UserApi) UpdatePwd(c *gin.Context) {
 
 // Avatar 修改头像
 func (a UserApi) Avatar(c *gin.Context) {
-	dirPath := common.GetDirPath("avatar")
+	dirPath := config.GetDirPath("avatar")
 	file, _, err := c.Request.FormFile("avatarFile")
 	fileName := gotool.IdUtils.IdUUIDToRan(true) + ".jpg"
 	filePath := dirPath + fileName

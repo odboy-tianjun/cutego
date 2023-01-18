@@ -2,9 +2,9 @@ package cache
 
 import (
 	"cutego/pkg/constant"
-	"cutego/pkg/logging"
-	"cutego/pkg/util"
 	"cutego/refs"
+	"encoding/json"
+	"fmt"
 )
 
 // RemoveList 批量根据Key删除数据
@@ -19,7 +19,7 @@ func RemoveList(list []string) {
 func RemoveCache(key string) int {
 	del, err := refs.RedisDB.DEL(key)
 	if err != nil {
-		logging.ErrorLog(err)
+		fmt.Println(err.Error())
 	}
 	return del
 }
@@ -30,7 +30,7 @@ func RemoveCache(key string) int {
 func GetCache(key string) string {
 	val, err := refs.RedisDB.GET(key)
 	if err != nil {
-		logging.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
+		fmt.Println(constant.RedisConst{}.GetRedisError(), err.Error())
 		return ""
 	}
 	return val
@@ -41,9 +41,9 @@ func GetCache(key string) string {
 // @Param value 值
 // @Return 新增的行数
 func SetCache(key string, value interface{}) int {
-	n, err := refs.RedisDB.SET(key, util.StructToJson(value))
+	n, err := refs.RedisDB.SET(key, StructToJson(value))
 	if err != nil {
-		logging.ErrorLog(constant.RedisConst{}.GetRedisError(), err.Error())
+		fmt.Println(constant.RedisConst{}.GetRedisError(), err.Error())
 		return 0
 	}
 	return int(n)
@@ -55,5 +55,43 @@ func SetCache(key string, value interface{}) int {
 // @Param sec 过期时间(单位: 秒)
 // @Return 新增的行数
 func SetCacheTTL(key string, value interface{}, sec int) {
-	refs.RedisDB.SETEX(key, sec, util.StructToJson(value))
+	refs.RedisDB.SETEX(key, sec, StructToJson(value))
+}
+
+// 结构体、Map等转Json字符串
+// @Param v interface{}
+// @Return Json字符串
+func StructToJson(v interface{}) string {
+	jsonBytes, err := json.Marshal(&v)
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
+	}
+	s := string(jsonBytes)
+	//DebugLogf("StructToJson, json=%s", s)
+	return s
+}
+
+// Json字符串转结构体、Map等
+//
+// 单个对象
+// s := new(models2.SysConfig)
+// return common.JsonToStruct(get, s).(*models2.SysConfig)
+//
+// 切片(interface{}.(期望类型))
+// s := make([]interface {}, 0)
+// target := common.JsonToStruct(get, s)
+// target.([]dataobject.SysDictData)
+//
+// @Param data Json字符串
+// @Param s 容器(结构体、Map等)
+// @Return interface{}
+func JsonToStruct(data string, s interface{}) interface{} {
+	err := json.Unmarshal([]byte(data), &s)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+	//common.DebugLogf("JsonToStruct, obj=%v", s)
+	return s
 }

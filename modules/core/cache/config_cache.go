@@ -3,7 +3,6 @@ package cache
 import (
 	models2 "cutego/modules/core/dataobject"
 	"cutego/pkg/cache"
-	"cutego/pkg/common"
 	"cutego/pkg/constant"
 )
 
@@ -13,13 +12,13 @@ import (
 func GetRedisConfig(key string) *models2.SysConfig {
 	val := cache.GetCache(constant.RedisConst{}.GetRedisConfigKey() + key)
 	s := new(models2.SysConfig)
-	return common.JsonToStruct(val, s).(*models2.SysConfig)
+	return cache.JsonToStruct(val, s).(*models2.SysConfig)
 }
 
 // SetRedisConfig 将配置存入缓存
 // @Param config models2.SysConfig
 func SetRedisConfig(config models2.SysConfig) {
-	cache.SetCache(config.ConfigKey, common.StructToJson(config))
+	cache.SetCache(config.ConfigKey, cache.StructToJson(config))
 }
 
 // RemoveRedisConfig 从缓存中删除配置

@@ -5,7 +5,6 @@ import (
 	cache2 "cutego/modules/core/cache"
 	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
-	"cutego/pkg/common"
 	"cutego/pkg/page"
 	"cutego/pkg/resp"
 	"cutego/pkg/tree/tree_menu"
@@ -46,7 +45,7 @@ func (a LoginApi) Login(c *gin.Context) {
 }
 
 func (a LoginApi) handleLoginInfo(c *gin.Context, body request2.LoginBody, loginStatus bool) {
-	status := common.If(loginStatus, "1", "0")
+	status := util.IF(loginStatus, "1", "0")
 
 	clientIp := a.loginInfoService.GetRequestClientIp(c)
 	var location string

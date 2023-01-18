@@ -5,7 +5,6 @@ import (
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dataobject"
 	"cutego/modules/core/service"
-	"cutego/pkg/common"
 	"cutego/pkg/cronjob"
 	"cutego/pkg/resp"
 	"cutego/pkg/util"
@@ -36,7 +35,7 @@ func (a CronJobApi) List(c *gin.Context) {
 // GetById 根据id获取任务详情
 func (a CronJobApi) GetById(c *gin.Context) {
 	jobId := c.Param("jobId")
-	info := a.cronJobService.GetInfo(common.StringToInt64(jobId))
+	info := a.cronJobService.GetInfo(util.StringToInt64(jobId))
 	resp.OK(c, util.DeepCopy(info, &response.CronJobResponse{}))
 }
 
@@ -73,7 +72,7 @@ func (a CronJobApi) Add(c *gin.Context) {
 
 // Remove 删除定时任务
 func (a CronJobApi) Remove(c *gin.Context) {
-	jobId := common.StringToInt64(c.Param("jobId"))
+	jobId := util.StringToInt64(c.Param("jobId"))
 	funcAlias := c.Param("funcAlias")
 
 	if a.cronJobService.GetInfo(jobId).Status == "1" {

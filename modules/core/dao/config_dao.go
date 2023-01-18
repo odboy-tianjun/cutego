@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/cache"
 	"cutego/pkg/constant"
 	"cutego/pkg/logging"
 	"cutego/pkg/page"
@@ -160,7 +160,7 @@ func init() {
 		return
 	}
 	for _, sysConfig := range configs {
-		refs.RedisDB.SET(constant.RedisConst{}.GetRedisConfigKey()+sysConfig.ConfigKey, common.StructToJson(map[string]interface{}{
+		refs.RedisDB.SET(constant.RedisConst{}.GetRedisConfigKey()+sysConfig.ConfigKey, cache.StructToJson(map[string]interface{}{
 			"configId":    sysConfig.ConfigId,
 			"configName":  sysConfig.ConfigName,
 			"configKey":   sysConfig.ConfigKey,

@@ -3,7 +3,7 @@ package dao
 import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/common"
+	"cutego/pkg/cache"
 	"cutego/pkg/constant"
 	"cutego/pkg/logging"
 	"cutego/pkg/page"
@@ -152,6 +152,6 @@ func init() {
 				})
 			}
 		}
-		refs.RedisDB.SET(constant.RedisConst{}.GetRedisDictKey()+dictType.DictType, common.StructToJson(dictData))
+		refs.RedisDB.SET(constant.RedisConst{}.GetRedisDictKey()+dictType.DictType, cache.StructToJson(dictData))
 	}
 }
