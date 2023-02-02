@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 // IF 三元表达式
@@ -77,4 +78,36 @@ func IsFileOrDirExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+// ToJSONString 转json字符串
+// v 对象, 非对象地址
+func ToJSONString(v interface{}) string {
+	output, _ := json.Marshal(&v)
+	return string(output)
+}
+
+// ParseJSONStruct 解析json字符串
+// jsonStr json字符串
+// v 对象, 非对象地址
+func ParseJSONStruct(jsonStr string, v interface{}) {
+	err := json.Unmarshal([]byte(jsonStr), &v)
+	if err != nil {
+		panic("JSON解析失败, " + err.Error())
+	}
+}
+
+// FormatDateTime 格式化日期时间
+func FormatDateTime(date time.Time) string {
+	return date.Format("2006-01-02 15:04:05")
+}
+
+// FormatDate 格式化日期
+func FormatDate(date time.Time) string {
+	return date.Format("2006-01-02")
+}
+
+// FormatTime 格式化时间
+func FormatTime(date time.Time) string {
+	return date.Format("15:04:05")
 }

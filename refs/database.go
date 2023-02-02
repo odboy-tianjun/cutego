@@ -15,7 +15,7 @@ func init() {
 	var err error
 	// 配置mysql数据库
 	ds := config.AppEnvConfig.DataSource
-	jdbc := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+	jdbc := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True",
 		ds.Username,
 		ds.Password,
 		ds.Host,
@@ -44,5 +44,12 @@ func init() {
 	SqlDB.ShowSQL(true)
 	// 开启缓存
 	SqlDB.SetDefaultCacher(xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000))
+	// 切换标准时区
+	location, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic("加载时区异常, " + err.Error())
+	}
+	SqlDB.SetTZLocation(location)
+	SqlDB.SetTZDatabase(location)
 	logging.InfoLog("database init end...")
 }

@@ -6,7 +6,7 @@ cutego:
   #邮件
   mail:
     host: smtp.qq.com
-    port: 465
+    port: 587
     username: tianjun@odboy.cn
     password: xxxxxxxxxxx
     default-encoding: UTF-8
