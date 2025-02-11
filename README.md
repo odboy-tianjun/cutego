@@ -27,6 +27,25 @@ gitee地址:  https://gitee.com/odboy/cutego-ui
 
 可参考ruoyi前端手册: http://doc.ruoyi.vip/ruoyi/document/qdsc.html   
 
+#### 界面预览
+![100](docs/preview/100.png)
+***
+![101](docs/preview/101.png)
+***
+![102](docs/preview/102.png)
+***
+![103](docs/preview/103.png)
+***
+![104](docs/preview/104.png)
+***
+![105](docs/preview/105.png)
+***
+![106](docs/preview/106.png)
+***
+![107](docs/preview/107.png)
+***
+![108](docs/preview/108.png)
+
 #### 安装教程
 
 - 1、安装golang运行环境
