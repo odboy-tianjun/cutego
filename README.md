@@ -174,5 +174,5 @@ windows下面 PowerShell不行，要CMD
 - robfig/cron定时任务框架 [https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc](https://pkg.go.dev/github.com/robfig/cron?utm_source=godoc)
 
 ### 支持
-如果觉得本项目还不错或在工作中有所启发，请在Gitee(码云)帮开发者点亮星星，这是对开发者最大的支持和鼓励！
+如果觉得本项目还不错或在工作中有所启发，请在Github帮开发者点亮星星，这是对开发者最大的支持和鼓励！
 
