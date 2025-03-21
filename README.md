@@ -7,7 +7,7 @@
 </p>
 
 #### 介绍
-CuteGo是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用
+CuteGo是一套完全自研全部开源的快速开发平台，毫无保留给个人及企业免费使用
 
 * 前端采用Vue、Element UI
 * 后端采用Gin、Xorm、自定义RBAC、Redis & Jwt, 未使用Casbin
