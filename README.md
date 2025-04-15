@@ -23,7 +23,7 @@ CuteGo是一套完全自研全部开源的快速开发平台，毫无保留给�
 8. 定时任务：定时调度执行方法, 方法注册在 core/job/index.go
 
 #### cutego前端   
-gitee地址:  https://gitee.com/odboy/cutego-ui   
+[https://github.com/odboy-tianjun/cutego-ui](https://github.com/odboy-tianjun/cutego-ui) 
 
 可参考ruoyi前端手册: http://doc.ruoyi.vip/ruoyi/document/qdsc.html   
 
