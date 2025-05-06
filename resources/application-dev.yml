@@ -30,12 +30,6 @@ redis:
     max-idle: 8
     # 连接池最大阻塞等待时间（使用负值表示没有限制）
     max-wait: 3
-mongodb:
-  url:
-  port:
-  db:
-  username:
-  password:
 # 登录相关配置
 login:
   # 是否限制单用户登录

@@ -4,7 +4,6 @@ type ApplicationEnvStruct struct {
 	Server     ServerConfig     `yaml:"server"`
 	DataSource DataSourceConfig `yaml:"datasource"`
 	Redis      RedisConfig      `yaml:"redis"`
-	MongoDb    MongoDbConfig    `yaml:"mongodb"`
 	Login      LoginConfig      `yaml:"login"`
 	Jwt        JwtConfig        `yaml:"jwt"`
 	Logger     LoggerConfig     `yaml:"logger"`
@@ -63,15 +62,6 @@ type RedisPoolConfig struct {
 	MaxIdle int `yaml:"max-idle"`
 	// 连接池最大阻塞等待时间（使用负值表示没有限制）
 	MaxWait int `yaml:"max-wait"`
-}
-
-// MongoDbConfig MongoDB
-type MongoDbConfig struct {
-	Url      string `yaml:"url"`
-	Port     string `yaml:"port"`
-	DB       string `yaml:"db"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
 }
 
 // LoginConfig 登录相关
