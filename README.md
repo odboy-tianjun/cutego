@@ -108,9 +108,8 @@ cutego
 [模块名称] entity -> dao -> service -> api -> router
 ```
 #### SQL转换器
-```text
-http://www.gotool.top/handlesql/sql2xorm
-```
+[https://www.gotool.top/handlesql/sql2xorm](https://www.gotool.top/handlesql/sql2xorm)
+
 ![img.png](docs/images/sql转xorm1.png)   
 
 
