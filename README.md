@@ -1,10 +1,6 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;"><img src="https://gitee.com/odboy/cutego/raw/master/docs/images/logo.png"/></h1>
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Version 1.0.0</h1>
 <h4 align="center">基于Gin、Xorm、Vue前后端分离的Go快速开发框架</h4>
-<p align="center">
-	<a href="https://gitee.com/odboy/cutego/stargazers"><img src="https://gitee.com/odboy/cutego/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/odboy/cutego/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
-</p>
 
 #### 介绍
 CuteGo是一套完全自研全部开源的快速开发平台，毫无保留给个人及企业免费使用
