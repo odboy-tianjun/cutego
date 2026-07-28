@@ -63,11 +63,11 @@ func (a CronJobApi) Add(c *gin.Context) {
 	record := a.cronJobService.GetInfoByAlias(dto.FuncAlias)
 	if record.JobId > 0 {
 		resp.Error(c, "任务已存在!")
-	} else {
-		a.cronJobService.Save(dto)
-		cronjob.AppendCronFunc(dto.JobCron, dto.FuncAlias, dto.Status)
-		resp.OK(c)
+		return
 	}
+	a.cronJobService.Save(dto)
+	cronjob.AppendCronFunc(dto.JobCron, dto.FuncAlias, dto.Status)
+	resp.OK(c)
 }
 
 // Remove 删除定时任务

@@ -11,6 +11,9 @@ import (
 // @Return interface {}
 func GetRedisDict(key string) interface{} {
 	val := cache.GetCache(key)
+	if val == "" {
+		return nil
+	}
 	s := make([]interface{}, 0)
 	return cache.JsonToStruct(val, s)
 }

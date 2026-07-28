@@ -33,13 +33,15 @@ func ErrorResp(data ...interface{}) *Response {
 		Data:   nil,
 	}
 	for _, value := range data {
-		switch value.(type) {
+		switch v := value.(type) {
 		case string:
-			response.Msg = value.(string)
+			response.Msg = v
 		case int:
-			response.Status = value.(int)
-		case interface{}:
-			response.Data = value.(interface{})
+			response.Status = v
+		case error:
+			response.Msg = v.Error()
+		default:
+			response.Data = v
 		}
 	}
 	return &response
@@ -52,17 +54,18 @@ func Error(c *gin.Context, data ...interface{}) {
 		Data:   nil,
 	}
 	for _, value := range data {
-		switch value.(type) {
+		switch v := value.(type) {
 		case string:
-			response.Msg = value.(string)
+			response.Msg = v
 		case int:
-			response.Status = value.(int)
-		case interface{}:
-			response.Data = value.(interface{})
+			response.Status = v
+		case error:
+			response.Msg = v.Error()
+		default:
+			response.Data = v
 		}
 	}
 	c.JSON(http.StatusOK, response)
-	return
 }
 func ParamError(c *gin.Context, data ...interface{}) {
 	response := Response{
@@ -71,17 +74,18 @@ func ParamError(c *gin.Context, data ...interface{}) {
 		Data:   nil,
 	}
 	for _, value := range data {
-		switch value.(type) {
+		switch v := value.(type) {
 		case string:
-			response.Msg = value.(string)
+			response.Msg = v
 		case int:
-			response.Status = value.(int)
-		case interface{}:
-			response.Data = value.(interface{})
+			response.Status = v
+		case error:
+			response.Msg = v.Error()
+		default:
+			response.Data = v
 		}
 	}
 	c.JSON(http.StatusBadRequest, response)
-	return
 }
 func OK(c *gin.Context, data ...interface{}) {
 	response := Response{
@@ -90,13 +94,12 @@ func OK(c *gin.Context, data ...interface{}) {
 		Data:   nil,
 	}
 	for _, datum := range data {
-		switch datum.(type) {
+		switch v := datum.(type) {
 		case string:
-			response.Msg = datum.(string)
-		case interface{}:
-			response.Data = datum.(interface{})
+			response.Msg = v
+		default:
+			response.Data = v
 		}
 	}
 	c.JSON(http.StatusOK, response)
-	return
 }

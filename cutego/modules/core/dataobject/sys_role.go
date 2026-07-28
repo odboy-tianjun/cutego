@@ -12,6 +12,7 @@ type SysRole struct {
 	DeptCheckStrictly bool      `excel:"-" json:"deptCheckStrictly"`                              // 部门树选择项是否关联显示
 	Status            string    `excel:"name=角色状态,format=0=正常,1=停用" xorm:"char(1)" json:"status"` // 角色状态 0正常1停用
 	DelFlag           string    `excel:"" xorm:"char(1)" json:"delFlag"`                          // 删除标记0正常1删除
+	Flag              bool      `xorm:"-" json:"flag"`                                            // 是否已分配
 	CreateTime        time.Time `excel:"" xorm:"created" json:"createTime"`                       // 创建时间
 	CreateBy          string    `excel:"" json:"createBy"`                                        // 创建人
 	UpdateTime        time.Time `excel:"" xorm:"updated" json:"updateTime"`                       // 更新时间

@@ -4,7 +4,7 @@ import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/api/v1/response"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"cutego/pkg/page"
 	"cutego/refs"
 	"github.com/druidcaesa/gotool"
@@ -23,10 +23,16 @@ func (d UserDao) sqlSelectJoin() *xorm.Session {
 		Join("LEFT", []string{"sys_role", "r"}, "r.role_id = ur.role_id")
 }
 
+// 查询列表专用sql, 不关联角色表避免重复行
+func (d UserDao) sqlSelectList() *xorm.Session {
+	return refs.SqlDB.NewSession().Table([]string{"sys_user", "u"}).
+		Join("LEFT", []string{"sys_dept", "d"}, "u.dept_id = d.dept_id")
+}
+
 // SelectPage 查询用户集合
 func (d UserDao) SelectPage(query request.UserQuery) ([]*response.UserResponse, int64) {
 	resp := make([]*response.UserResponse, 0)
-	sql := d.sqlSelectJoin()
+	sql := d.sqlSelectList()
 	if !gotool.StrUtils.HasEmpty(query.UserName) {
 		sql.And("u.user_name like concat('%',?,'%')", query.UserName)
 	}
@@ -48,7 +54,7 @@ func (d UserDao) SelectPage(query request.UserQuery) ([]*response.UserResponse, 
 	total, _ := page.GetTotal(sql.Clone())
 	err := sql.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil, 0
 	}
 	return resp, total
@@ -59,7 +65,7 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 	var resp response.UserResponse
 	get, err := d.sqlSelectJoin().Where("u.user_id = ?", userId).Get(&resp)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 	}
 	if !get {
 		return nil
@@ -71,7 +77,7 @@ func (d UserDao) GetUserById(userId int64) *response.UserResponse {
 func (d UserDao) GetUserByUserName(user dataobject.SysUser) *dataobject.SysUser {
 	i, err := refs.SqlDB.Get(&user)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil
 	}
 	if i {
@@ -118,7 +124,7 @@ func (d UserDao) Insert(body request.UserBody) *request.UserBody {
 	session.Begin()
 	_, err := session.Table("sys_user").Insert(&body)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -132,7 +138,7 @@ func (d UserDao) Update(body request.UserBody) int64 {
 	_, err := session.Where("user_id = ?", body.UserId).Update(&body)
 	if err != nil {
 		session.Rollback()
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return 0
 	}
 	session.Commit()
@@ -148,7 +154,7 @@ func (d UserDao) Delete(id int64) int64 {
 	session.Begin()
 	i, err := session.Delete(&user)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -165,7 +171,7 @@ func (d UserDao) ResetPwd(body request.UserBody) int64 {
 	session.Begin()
 	_, err := session.Where("user_id = ?", user.UserId).Cols("password").Update(&user)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 		return 0
 	}
@@ -190,7 +196,7 @@ func (d UserDao) GetAllocatedList(query request.UserQuery) ([]*response.UserResp
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil, 0
 	}
 	return resp, total
@@ -214,7 +220,7 @@ func (d UserDao) GetUnallocatedList(query request.UserQuery) ([]*response.UserRe
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&resp)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil, 0
 	}
 	return resp, total
@@ -229,7 +235,7 @@ func (d UserDao) UpdatePwd(id int64, hash string) int64 {
 	session.Begin()
 	update, err := session.Cols("password").Where("user_id = ?", id).Update(&user)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 		return 0
 	}
@@ -250,7 +256,7 @@ func (d UserDao) UpdateAvatar(info *response.UserResponse) int64 {
 	update, err := session.Cols("avatar", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {
 		session.Rollback()
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return 0
 	}
 	session.Commit()
@@ -269,7 +275,7 @@ func (d UserDao) UpdateStatus(info request.UserBody) int64 {
 	update, err := session.Cols("status", "update_by", "update_time").Where("user_id = ?", user.UserId).Update(&user)
 	if err != nil {
 		session.Rollback()
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return 0
 	}
 	session.Commit()

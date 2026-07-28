@@ -85,6 +85,25 @@ func (s UserService) BindUserRole(user *request.UserBody) {
 	}
 }
 
+// RemoveUserRole 删除用户所有角色关联
+func (s UserService) RemoveUserRole(userId int64) {
+	s.userRoleDao.Delete(userId)
+}
+
+// BindUserRoleIds 直接绑定用户角色
+func (s UserService) BindUserRoleIds(userId int64, roleIds []int64) {
+	if len(roleIds) > 0 {
+		roles := make([]dataobject.SysUserRole, 0, len(roleIds))
+		for _, roleId := range roleIds {
+			roles = append(roles, dataobject.SysUserRole{
+				UserId: userId,
+				RoleId: roleId,
+			})
+		}
+		s.userRoleDao.BatchInsert(roles)
+	}
+}
+
 // Edit 修改用户数据
 func (s UserService) Edit(body request.UserBody) int64 {
 	// 删除原有用户和角色关系

@@ -1,6 +1,7 @@
 package refs
 
 import (
+	"context"
 	redisTool "cutego/pkg/redispool"
 	"github.com/gin-gonic/gin"
 	"github.com/go-xorm/xorm"
@@ -8,7 +9,8 @@ import (
 
 // X 全局DB
 var (
-	SqlDB   *xorm.Engine
-	RedisDB *redisTool.RedisClient
-	CoolGin *gin.Engine
+	SqlDB      *xorm.Engine
+	RedisDB    *redisTool.RedisClient
+	CoolGin    *gin.Engine
+	pingCancel context.CancelFunc
 )

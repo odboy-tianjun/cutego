@@ -1,13 +1,13 @@
 package refs
 
 import (
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	redisTool "cutego/pkg/redispool"
 )
 
 // 配置redis数据库
-func init() {
-	logging.InfoLog("redis init start...")
+func InitRedis() {
+	logger.SugaredLogger.Infoln("redis init start...")
 	RedisDB = redisTool.NewRedis()
-	logging.InfoLog("redis init end...")
+	logger.SugaredLogger.Infoln("redis init end...")
 }

@@ -2,7 +2,7 @@ package dao
 
 import (
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"cutego/refs"
 )
 
@@ -15,7 +15,7 @@ func (d RoleMenuDao) Insert(list []dataobject.SysRoleMenu) int64 {
 	session.Begin()
 	insert, err := session.Insert(&list)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -31,7 +31,7 @@ func (d RoleMenuDao) Delete(role dataobject.SysRole) {
 	session.Begin()
 	_, err := session.Delete(&menu)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 	}
 	session.Commit()

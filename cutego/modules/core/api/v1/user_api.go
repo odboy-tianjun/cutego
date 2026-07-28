@@ -7,7 +7,7 @@ import (
 	"cutego/modules/core/service"
 	"cutego/pkg/config"
 	"cutego/pkg/excels"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"cutego/pkg/page"
 	"cutego/pkg/resp"
 	"cutego/pkg/util"
@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // UserApi 用户操作api
@@ -93,26 +94,63 @@ func (a UserApi) AuthRole(c *gin.Context) {
 	userId := c.Param("userId")
 	parseInt, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		c.JSON(http.StatusInternalServerError, resp.ErrorResp(err))
+		return
 	}
 	user := a.userService.GetUserById(parseInt)
-	// 查询角色
-	roles := a.roleService.GetRoleListByUserId(parseInt)
-	flag := dataobject.SysUser{}.IsAdmin(parseInt)
-	if flag {
-		m["roles"] = roles
-	} else {
-		roleList := make([]dataobject.SysRole, 0)
-		for _, role := range *roles {
-			if role.RoleId != 1 {
-				roleList = append(roleList, role)
-			}
+	// 查询所有角色
+	roleAll, _ := a.roleService.FindAll(nil)
+	// 查询用户已有角色id集合
+	roleIds := a.roleService.FindRoleListByUserId(parseInt)
+	// 将角色id集合转为map, 便于快速判断
+	roleIdMap := make(map[int64]bool)
+	if roleIds != nil {
+		for _, id := range *roleIds {
+			roleIdMap[id] = true
 		}
-		m["roles"] = roleList
 	}
+	roleList := make([]dataobject.SysRole, 0)
+	for _, role := range roleAll {
+		// 标记是否已分配
+		role.Flag = roleIdMap[role.RoleId]
+		roleList = append(roleList, *role)
+	}
+	m["roles"] = roleList
 	m["user"] = user
 	c.JSON(http.StatusOK, resp.Success(m))
+}
+
+// AuthRoleUpdate 更新用户授权角色
+func (a UserApi) AuthRoleUpdate(c *gin.Context) {
+	userIdStr := c.Query("userId")
+	roleIdsStr := c.Query("roleIds")
+	if userIdStr == "" {
+		resp.ParamError(c, "缺少userId参数")
+		return
+	}
+	userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	if err != nil {
+		resp.ParamError(c, "userId参数错误")
+		return
+	}
+	// 先删除用户所有角色关联
+	a.userService.RemoveUserRole(userId)
+	// 解析并添加新角色
+	if roleIdsStr != "" {
+		roleIdStrs := strings.Split(roleIdsStr, ",")
+		roleIds := make([]int64, 0, len(roleIdStrs))
+		for _, s := range roleIdStrs {
+			id, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64)
+			if err == nil {
+				roleIds = append(roleIds, id)
+			}
+		}
+		if len(roleIds) > 0 {
+			a.userService.BindUserRoleIds(userId, roleIds)
+		}
+	}
+	resp.OK(c)
 }
 
 // Add 新增用户
@@ -174,7 +212,7 @@ func (a UserApi) Remove(c *gin.Context) {
 	param := c.Param("userId")
 	userId, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		c.JSON(http.StatusInternalServerError, resp.ErrorResp("参数错误"))
 		return
 	}
@@ -294,13 +332,13 @@ func (a UserApi) Avatar(c *gin.Context) {
 	fileAppend, err := gotool.FileUtils.OpenFileAppend(filePath)
 	defer fileAppend.Close()
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		resp.Error(c)
 		return
 	}
 	_, err = io.Copy(fileAppend, file)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		resp.Error(c)
 		return
 	}

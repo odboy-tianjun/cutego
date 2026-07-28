@@ -11,8 +11,15 @@ import (
 // @Return *models2.SysConfig
 func GetRedisConfig(key string) *models2.SysConfig {
 	val := cache.GetCache(constant.RedisConst{}.GetRedisConfigKey() + key)
+	if val == "" {
+		return nil
+	}
 	s := new(models2.SysConfig)
-	return cache.JsonToStruct(val, s).(*models2.SysConfig)
+	result := cache.JsonToStruct(val, s)
+	if result == nil {
+		return nil
+	}
+	return result.(*models2.SysConfig)
 }
 
 // SetRedisConfig 将配置存入缓存

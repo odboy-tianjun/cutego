@@ -5,9 +5,10 @@ import (
 	"cutego/modules/core/dataobject"
 	"cutego/pkg/cache"
 	"cutego/pkg/constant"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"cutego/pkg/page"
 	"cutego/refs"
+
 	"github.com/druidcaesa/gotool"
 	"github.com/go-xorm/xorm"
 )
@@ -28,7 +29,7 @@ func (d *DictDataDao) SelectByDictType(dictType string) []dataobject.SysDictData
 	err := session.Where("status = '0' ").And("dict_type = ?", dictType).OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil
 	}
 	return data
@@ -42,7 +43,7 @@ func (d DictDataDao) GetDiceDataAll() *[]dataobject.SysDictData {
 	err := session.Where("status = '0' ").OrderBy("dict_sort").Asc("dict_sort").
 		Find(&data)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil
 	}
 	return &data
@@ -67,7 +68,7 @@ func (d *DictDataDao) SelectPage(query request.DiceDataQuery) (*[]dataobject.Sys
 	total, _ := page.GetTotal(session.Clone())
 	err := session.Limit(query.PageSize, page.StartSize(query.PageNum, query.PageSize)).Find(&list)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil, 0
 	}
 	return &list, total
@@ -81,7 +82,7 @@ func (d *DictDataDao) SelectByDictCode(dictCode int64) *dataobject.SysDictData {
 	session := refs.SqlDB.NewSession()
 	_, err := session.Where("dict_code = ?", dictCode).Get(&data)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return nil
 	}
 	return &data
@@ -96,7 +97,7 @@ func (d *DictDataDao) Insert(data dataobject.SysDictData) int64 {
 	insert, err := session.Insert(&data)
 	if err != nil {
 		session.Rollback()
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return 0
 	}
 	session.Commit()
@@ -109,7 +110,7 @@ func (d *DictDataDao) Delete(codes []int64) bool {
 	session.Begin()
 	_, err := session.In("dict_code", codes).Delete(&dataobject.SysDictData{})
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 		return false
 	}
@@ -124,14 +125,14 @@ func (d *DictDataDao) Update(data dataobject.SysDictData) bool {
 	_, err := session.Where("dict_code = ?", data.DictCode).Update(&data)
 	if err != nil {
 		session.Rollback()
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return false
 	}
 	session.Commit()
 	return true
 }
 
-func init() {
+func PreInitDictData() {
 	// 查询字典类型数据
 	dictTypeDao := new(DictTypeDao)
 	typeAll := dictTypeDao.SelectAll()

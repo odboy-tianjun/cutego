@@ -2,7 +2,7 @@ package dao
 
 import (
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"cutego/refs"
 )
 
@@ -15,7 +15,7 @@ func (d UserPostDao) BatchInsert(posts []dataobject.SysUserPost) {
 	session.Begin()
 	_, err := session.Table(dataobject.SysUserPost{}.TableName()).Insert(&posts)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 		return
 	}
@@ -31,7 +31,7 @@ func (d UserPostDao) Delete(id int64) {
 	session.Begin()
 	_, err := session.Delete(&post)
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		session.Rollback()
 	}
 	session.Commit()
@@ -41,7 +41,7 @@ func (d UserPostDao) Delete(id int64) {
 func (d UserPostDao) CountById(id int64) int64 {
 	count, err := refs.SqlDB.NewSession().Table("sys_user_post").Cols("post_id").Where("post_id = ?", id).Count()
 	if err != nil {
-		logging.ErrorLog(err)
+		logger.SugaredLogger.Errorln(err)
 		return 0
 	}
 	return count

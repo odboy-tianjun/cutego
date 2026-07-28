@@ -1,17 +1,19 @@
 package refs
 
 import (
+	"context"
 	"cutego/pkg/config"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"fmt"
+	"time"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	"time"
 )
 
 // 配置数据库
-func init() {
-	logging.InfoLog("database init start...")
+func InitDatabase() {
+	logger.SugaredLogger.Infoln("database init start...")
 	var err error
 	// 配置mysql数据库
 	ds := config.AppEnvConfig.DataSource
@@ -24,20 +26,28 @@ func init() {
 		ds.Charset)
 	SqlDB, err = xorm.NewEngine(ds.DbType, jdbc)
 	if err != nil {
-		logging.FatalfLog("db error: %#v\n", err.Error())
+		logger.SugaredLogger.Fatalf("db error: %#v\n", err.Error())
 	}
 	err = SqlDB.Ping()
 	if err != nil {
-		logging.FatalfLog("db connect error: %#v\n", err.Error())
+		logger.SugaredLogger.Fatalf("db connect error: %#v\n", err.Error())
 	}
 	SqlDB.SetMaxIdleConns(ds.MaxIdleSize)
 	SqlDB.SetMaxOpenConns(ds.MaxOpenSize)
-	timer := time.NewTicker(time.Minute * 30)
+	ctx, cancel := context.WithCancel(context.Background())
+	pingCancel = cancel
+	timer := time.NewTicker(time.Minute * 10)
 	go func(x *xorm.Engine) {
-		for _ = range timer.C {
-			err = x.Ping()
-			if err != nil {
-				logging.FatalfLog("db connect error: %#v\n", err.Error())
+		for {
+			select {
+			case <-timer.C:
+				err = x.Ping()
+				if err != nil {
+					logger.SugaredLogger.Fatalf("db connect error: %#v\n", err.Error())
+				}
+			case <-ctx.Done():
+				timer.Stop()
+				return
 			}
 		}
 	}(SqlDB)
@@ -51,5 +61,5 @@ func init() {
 	}
 	SqlDB.SetTZLocation(location)
 	SqlDB.SetTZDatabase(location)
-	logging.InfoLog("database init end...")
+	logger.SugaredLogger.Infoln("database init end...")
 }

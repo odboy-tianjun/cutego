@@ -2,12 +2,13 @@ package config
 
 import (
 	config "cutego/pkg/config/models"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"runtime"
+
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -87,7 +88,7 @@ func GetDirPath(resType string) string {
 	sysType := runtime.GOOS
 	switch sysType {
 	case "linux":
-		if resType == "logging" {
+		if resType == "logger" {
 			return AppCoreConfig.CuteGoConfig.File.Linux.Logs
 		} else if resType == "avatar" {
 			return AppCoreConfig.CuteGoConfig.File.Linux.Avatar
@@ -96,7 +97,7 @@ func GetDirPath(resType string) string {
 		}
 		break
 	case "windows":
-		if resType == "logging" {
+		if resType == "logger" {
 			return AppCoreConfig.CuteGoConfig.File.Windows.Logs
 		} else if resType == "avatar" {
 			return AppCoreConfig.CuteGoConfig.File.Windows.Avatar
@@ -105,7 +106,7 @@ func GetDirPath(resType string) string {
 		}
 		break
 	case "mac":
-		if resType == "logging" {
+		if resType == "logger" {
 			return AppCoreConfig.CuteGoConfig.File.Mac.Logs
 		} else if resType == "avatar" {
 			return AppCoreConfig.CuteGoConfig.File.Mac.Avatar
@@ -114,7 +115,7 @@ func GetDirPath(resType string) string {
 		}
 		break
 	case "darwin":
-		if resType == "logging" {
+		if resType == "logger" {
 			return AppCoreConfig.CuteGoConfig.File.Mac.Logs
 		} else if resType == "avatar" {
 			return AppCoreConfig.CuteGoConfig.File.Mac.Avatar
@@ -125,10 +126,10 @@ func GetDirPath(resType string) string {
 	return AppCoreConfig.CuteGoConfig.File.Linux.Logs
 }
 
-func init() {
+func InitConfig() {
 	// 资源文件所在的路径
 	resourcePath := GetRootPath()
-	logging.InfoLog("application init start...")
+	logger.SugaredLogger.Infoln("application init start...")
 	readAppYmlFile(resourcePath)
-	logging.InfoLog("application init start...")
+	logger.SugaredLogger.Infoln("application init start...")
 }

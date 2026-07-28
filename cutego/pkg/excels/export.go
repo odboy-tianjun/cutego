@@ -18,6 +18,16 @@ func getTitle(list []map[string]string) []string {
 	return titleList
 }
 
+// 列索引转Excel列字母 (0 -> A, 1 -> B, ..., 25 -> Z, 26 -> AA, 27 -> AB, ...)
+func columnIndexToLetter(col int) string {
+	letter := ""
+	for col >= 0 {
+		letter = string(rune('A'+col%26)) + letter
+		col = col/26 - 1
+	}
+	return letter
+}
+
 // ExportExcel 导出excel
 func ExportExcel(list []interface{}, title string) (error, *excelize.File) {
 	// 获取标题
@@ -28,7 +38,7 @@ func ExportExcel(list []interface{}, title string) (error, *excelize.File) {
 	// 如果有多个工作簿, 可以使用 file.SetActiveSheet(index) 来指定打开文件时focus到哪个工作簿
 	sheet1 := "Sheet1"
 	files := excelize.NewFile()
-	character := string(65 + len(headers) - 1)
+	character := columnIndexToLetter(len(headers) - 1)
 	/* -------------------- 第一行大标题 -------------------- */
 	// 设置行高
 	err := files.SetRowHeight(sheet1, 1, 25)
@@ -59,7 +69,7 @@ func ExportExcel(list []interface{}, title string) (error, *excelize.File) {
 		return err, nil
 	}
 	for k, v := range headers {
-		err = files.SetCellValue(sheet1, string(65+k)+"2", v)
+		err = files.SetCellValue(sheet1, columnIndexToLetter(k)+"2", v)
 		if err != nil {
 			return err, nil
 		}
@@ -94,7 +104,7 @@ func ExportExcel(list []interface{}, title string) (error, *excelize.File) {
 			if !getIsTitle(name, headerList) {
 				continue
 			}
-			err = files.SetCellValue(sheet1, string(65+num)+lineChr, getExp(name, expList, val.Interface()))
+			err = files.SetCellValue(sheet1, columnIndexToLetter(num)+lineChr, getExp(name, expList, val.Interface()))
 			if err != nil {
 				return err, nil
 			}

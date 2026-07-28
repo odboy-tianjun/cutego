@@ -1,10 +1,12 @@
 package websocket
 
 import (
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
+	"net/http"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"net/http"
 )
 
 // 连接例子
@@ -12,16 +14,16 @@ import (
 // var ws = new WebSocket("ws://127.0.0.1:21366/websocket?user=admin&code=notice");
 // // 连接打开时触发
 // ws.onopen = function(evt) {
-// console.logging("Connection open ...");
+// console.logger("Connection open ...");
 // ws.send("Hello WebSockets!");
 // };
 // // 接收到消息时触发
 // ws.onmessage = function(evt) {
-// console.logging("Received Message: " + evt.data);
+// console.logger("Received Message: " + evt.data);
 // };
 // // 连接关闭时触发
 // ws.onclose = function(evt) {
-// console.logging("Connection closed.");
+// console.logger("Connection closed.");
 // };
 // </script>
 
@@ -32,7 +34,10 @@ type OnReceiveMessage func(messageType int, content []byte) error
 const SignalSplitSymbol = "=_="
 
 // 用户名 <--> websocket通道
-var OnlineUserMap = make(map[string]*websocket.Conn)
+var (
+	OnlineUserMap = make(map[string]*websocket.Conn)
+	onlineUserMu  sync.RWMutex
+)
 
 var upGrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -57,20 +62,22 @@ func HandleWebSocketMessage(c *gin.Context) {
 	// defer ws.Close()
 	cacheKey := userValue + SignalSplitSymbol + codeValue
 	// 如果存在则踢掉之前的通道
+	onlineUserMu.Lock()
 	if OnlineUserMap[cacheKey] != nil {
 		// 函数结束后关闭
 		tmpConn := OnlineUserMap[cacheKey]
 		defer tmpConn.Close()
 	}
 	OnlineUserMap[cacheKey] = ws
+	onlineUserMu.Unlock()
 	// 回收监听消息
 	go ListenWebSocketMessage(userValue, codeValue, HandleAdminNotice)
 }
 
 // 回调函数的具体实现
 func HandleAdminNotice(messageType int, content []byte) error {
-	logging.InfoLog("messageType=%d\n", messageType)
-	logging.InfoLog("content=%s\n", string(content))
+	logger.SugaredLogger.Infof("messageType=%d", messageType)
+	logger.SugaredLogger.Infof("content=%s", string(content))
 	return nil
 }
 
@@ -78,7 +85,9 @@ func HandleAdminNotice(messageType int, content []byte) error {
 // onReceiveMessage为函数提供的回调接口, 让外部去实现
 func ListenWebSocketMessage(user string, code string, onReceiveMessage OnReceiveMessage) {
 	cacheKey := user + SignalSplitSymbol + code
+	onlineUserMu.RLock()
 	ws := OnlineUserMap[cacheKey]
+	onlineUserMu.RUnlock()
 	if ws != nil {
 		for {
 			// 读取ws中的数据

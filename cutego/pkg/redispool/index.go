@@ -3,11 +3,12 @@ package redispool
 import (
 	"cutego/pkg/common"
 	"cutego/pkg/config"
-	"cutego/pkg/logging"
+	"cutego/pkg/logger"
 	"fmt"
+	"time"
+
 	"github.com/druidcaesa/gotool"
 	"github.com/gomodule/redigo/redis"
-	"time"
 )
 
 // https://godoc.org/github.com/gomodule/redigo/redis#pkg-examples
@@ -42,19 +43,19 @@ func newPool() *redis.Pool {
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", config.AppEnvConfig.Redis.Host, config.AppEnvConfig.Redis.Port))
 			if err != nil {
-				logging.FatalfLog("Redis.Dial: %v", err)
+				logger.SugaredLogger.Fatalf("Redis.Dial: %v", err)
 				return nil, err
 			}
 			if gotool.StrUtils.HasNotEmpty(config.AppEnvConfig.Redis.Password) {
 				if _, err := c.Do("AUTH", config.AppEnvConfig.Redis.Password); err != nil {
 					c.Close()
-					logging.FatalfLog("Redis.AUTH: %v", err)
+					logger.SugaredLogger.Fatalf("Redis.AUTH: %v", err)
 					return nil, err
 				}
 			}
 			if _, err := c.Do("SELECT", config.AppEnvConfig.Redis.Database); err != nil {
 				c.Close()
-				logging.FatalfLog("Redis.SELECT: %v", err)
+				logger.SugaredLogger.Fatalf("Redis.SELECT: %v", err)
 				return nil, err
 			}
 			return c, nil
@@ -92,11 +93,11 @@ func (r *RedisClient) loopRead() {
 				if len(it.Key) > 0 {
 					if len(it.Field) > 0 {
 						if _, err := r.HSET(it.Key, it.Field, it.Value); err != nil {
-							logging.DebugLogf("[%s, %s, %s]: %s\n", it.Key, it.Field, it.Value, err.Error())
+							logger.SugaredLogger.Debugf("[%s, %s, %s]: %s\n", it.Key, it.Field, it.Value, err.Error())
 						}
 					} else {
 						if _, err := r.SET(it.Key, it.Value); err != nil {
-							logging.DebugLogf("[%s, %s, %s]: %s\n", it.Key, it.Field, it.Value, err.Error())
+							logger.SugaredLogger.Debugf("[%s, %s, %s]: %s\n", it.Key, it.Field, it.Value, err.Error())
 						}
 					}
 					if it.Expire > 0 {

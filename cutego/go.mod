@@ -3,13 +3,13 @@ module cutego
 go 1.16
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/druidcaesa/gotool v0.0.0-20210722000450-b972ac6f3771
 	github.com/gin-gonic/gin v1.7.3
 	github.com/go-basic/uuid v1.0.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-xorm/xorm v0.7.9
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gomodule/redigo v1.8.5
 	github.com/gorilla/websocket v1.5.0
 	github.com/jonboulle/clockwork v0.2.2 // indirect
@@ -22,6 +22,7 @@ require (
 	github.com/xuri/excelize/v2 v2.4.1
 	github.com/yinheli/mahonia v0.0.0-20131226213531-0eef680515cc // indirect
 	github.com/yinheli/qqwry v0.0.0-20160229183603-f50680010f4a
+	go.uber.org/zap v1.28.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/yaml.v2 v2.2.8

@@ -7,18 +7,18 @@ server:
 # 数据源
 datasource:
   db-type: mysql
-  host: 192.168.235.102
-  port: 3308
+  host: 127.0.0.1
+  port: 3306
   username: root
   password: 123456
   database: cutego
   charset: utf8
-  max-idle-size: 10000
-  max-open-size: 100000
+  max-idle-size: 10
+  max-open-size: 100
 redis:
   # 数据库索引
   database: 1
-  host: 192.168.235.102
+  host: 127.0.0.1
   port: 6379
   password: 123456
   # 连接超时时间

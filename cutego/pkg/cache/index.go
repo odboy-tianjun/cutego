@@ -30,7 +30,6 @@ func RemoveCache(key string) int {
 func GetCache(key string) string {
 	val, err := refs.RedisDB.GET(key)
 	if err != nil {
-		fmt.Println(constant.RedisConst{}.GetRedisError(), err.Error())
 		return ""
 	}
 	return val
@@ -87,11 +86,12 @@ func StructToJson(v interface{}) string {
 // @Param s 容器(结构体、Map等)
 // @Return interface{}
 func JsonToStruct(data string, s interface{}) interface{} {
-	err := json.Unmarshal([]byte(data), &s)
-	if err != nil {
-		fmt.Println(err.Error())
+	if data == "" {
 		return nil
 	}
-	//common.DebugLogf("JsonToStruct, obj=%v", s)
+	err := json.Unmarshal([]byte(data), &s)
+	if err != nil {
+		return nil
+	}
 	return s
 }

@@ -6,7 +6,7 @@ import (
 	"cutego/pkg/config"
 	"cutego/refs"
 	"errors"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
