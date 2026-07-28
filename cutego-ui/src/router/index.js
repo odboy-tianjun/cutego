@@ -126,6 +126,12 @@ export const constantRoutes = [
     hidden: true,
     children: [
       {
+        path: 'index',
+        component: (resolve) => require(['@/views/monitor/job/index'], resolve),
+        name: 'Job',
+        meta: { title: '定时任务' }
+      },
+      {
         path: 'log',
         component: (resolve) => require(['@/views/monitor/job/log'], resolve),
         name: 'JobLog',

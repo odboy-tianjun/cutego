@@ -23,4 +23,13 @@ func initCronJobRouter(router *gin.RouterGroup) {
 		// 改变定时任务状态
 		group.PUT("/changeStatus", v.ChangeStatus)
 	}
+
+	// 调度日志
+	log := new(v1.JobLogApi)
+	logGroup := router.Group("/monitor/jobLog")
+	{
+		logGroup.GET("/list", log.List)
+		logGroup.DELETE("/:jobLogId", log.Remove)
+		logGroup.DELETE("/clean", log.Clean)
+	}
 }
