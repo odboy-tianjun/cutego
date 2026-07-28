@@ -4,7 +4,6 @@ import (
 	"cutego/modules/core/api/v1/request"
 	"cutego/modules/core/dao"
 	"cutego/modules/core/dataobject"
-	"cutego/pkg/config"
 	"github.com/gin-gonic/gin"
 	"github.com/yinheli/qqwry"
 	"net"
@@ -50,7 +49,7 @@ func (s LoginInfoService) GetLocationByIp(ipAddr string) *qqwry.QQwry {
 		if err != nil {
 			panic("无法获取当前路径, " + err.Error())
 		}
-		q := qqwry.NewQQwry(dir + "/" + config.BaseConfigDirPath + "/scanip/qqwry.dat")
+		q := qqwry.NewQQwry(dir + "/" + "qqwry.dat")
 		q.Find(ipAddr)
 		return q
 	}
